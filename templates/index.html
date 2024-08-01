@@ -1,0 +1,557 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Auto Repair - Free Bootstrap 4 Template by Colorlib</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.timepicker.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+		<div class="wrap">
+	    <div class="container">
+				<div class="row justify-content-between">
+					<div class="col-md-3 d-flex align-items-center">
+						<a class="navbar-brand" href="/">Autorepair<span>.</span></a>
+					</div>
+					<div class="col-md-7">
+						<div class="row">
+							<div class="col">
+								<div class="top-wrap d-flex">
+									<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-location-arrow"></span></div>
+									<div class="text"><span>Address</span><span>Near JLN Stadium Kaloor Ernakulam</span></div>
+								</div>
+							</div>
+							<div class="col">
+								<div class="top-wrap d-flex">
+									<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-phone"></span></div>
+									<div class="text"><span>Call us</span><span>+91 9876543212</span></div>
+								</div>
+							</div>
+							<div class="col-md-3 d-flex justify-content-end align-items-center">
+								<div class="social-media">
+					    		<p class="mb-0 d-flex">
+					    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-facebook"><i class="sr-only">Facebook</i></span></a>
+					    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-twitter"><i class="sr-only">Twitter</i></span></a>
+					    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-instagram"><i class="sr-only">Instagram</i></span></a>
+					    			<a href="#" class="d-flex align-items-center justify-content-center"><span class="fa fa-dribbble"><i class="sr-only">Dribbble</i></span></a>
+					    		</p>
+				        </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+	    <div class="container">
+	    
+	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="fa fa-bars"></span> Menu
+	      </button>
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav mr-auto">
+	        	<li class="nav-item active"><a href="/" class="nav-link">Home</a></li>
+	        	<li class="nav-item"><a href="{% url 'login' %}" class="nav-link">Login</a></li>
+	        	<li class="nav-item"><a href="{% url 'register_user' %}" class="nav-link">User Register</a></li>
+	        	<li class="nav-item"><a href="{% url 'register_centre' %}" class="nav-link">Service Centre Register</a></li>
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- END nav -->
+    <div class="hero-wrap">
+	    <div class="home-slider owl-carousel">
+			<div class="slider-item" style="background-image: url('../static/images/Paul-Walker-in-The-Fast-Furious-2001.jpg'); background-size: cover; background-position: 60% 25%; background-repeat: no-repeat;">
+	      	<div class="overlay"></div>
+	        <div class="container">
+	          <div class="row no-gutters slider-text align-items-center justify-content-start">
+		          <div class="col-md-6 ftco-animate">
+		          	<div class="text w-100">
+		          		<h2>We are best car repair services</h2>
+			            <h1 class="mb-4">Make your car last longer</h1>
+			            <p><a href="{% url 'login' %}" class="btn btn-primary">Book an appointment</a></p>
+		            </div>
+		          </div>
+		        </div>
+	        </div>
+	      </div>
+
+	      <div class="slider-item" style="background-image: url(../static/images/batmobile.jpg); background-size: cover; background-position: 60% 80%; background-repeat: no-repeat;">
+	      	<div class="overlay"></div>
+	        <div class="container">
+	          <div class="row no-gutters slider-text align-items-center justify-content-start">
+		          <div class="col-md-6 ftco-animate">
+		          	<div class="text w-100">
+		          		<h2>We care about your car</h2>
+			            <h1 class="mb-4">It's time to come to repair your car</h1>
+			            <p><a href="{% url 'login' %}" class="btn btn-primary">Book an appointment</a></p>
+		            </div>
+		          </div>
+		        </div>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+		
+		<section class="intro">
+			<div class="container intro-wrap">
+				<div class="row no-gutters">
+					<div class="col-md-12 col-lg-9 bg-intro d-sm-flex align-items-center align-items-stretch">
+						<div class="intro-box d-flex align-items-center">
+							<div class="icon d-flex align-items-center justify-content-center">
+								<i class="flaticon-repair"></i>
+							</div>
+							<h2 class="mb-0">Are you ready? <span>Let's fix it!</span></h2>
+						</div>
+						<a href="{% url 'login' %}" class="bg-primary btn-custom d-flex align-items-center"><span>Book an Appointment</span></a>
+					</div>
+				</div>
+			</div>	
+		</section>
+
+    <section class="ftco-section">
+    	<div class="container">
+    		<div class="row justify-content-center pb-5 mb-3">
+          <div class="col-md-7 heading-section text-center ftco-animate">
+          	<span class="subheading">We offer Services</span>
+            <h2>Our car services</h2>
+          </div>
+        </div>
+    		<div class="row">
+          <div class="col-md-4 services ftco-animate">
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-car-service"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Oil change</h3>
+                <p>An oil and filter change consists of a full drain and refill of your engine oil and the fitting of a brand-new oil filter.
+					 Your car's oil filter removes contaminants from your engine oil, helping to reduce wear and tear of vital engine components.</p>
+              </div>
+            </div>
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-tyre"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Tire Change</h3>
+                <p>The replacement interval for a small hatchback car is usually between 4 to 5 years or 40,000 to 50,000 km. Similarly, the replacement interval for a mid-size sedan 
+					is 5 to 6 years or 50,000 to 60,000 km, and the replacement interval for a large SUV is between 6 to 7 years or 70,000 to 80,000 km.</p>
+              </div>
+            </div> 
+
+          </div>
+          <div class="col-md-4 services ftco-animate">
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-battery"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Batteries</h3>
+                <p>An automobile battery is an example of a wet cell battery, with six cells. Each cell of a lead storage battery consists of alternate plates made of a lead alloy grid filled with sponge lead plates (cathode) or coated with lead dioxide (anode). 
+					Each cell is filled with a sulfuric acid solution, which is the electrolyte.</p>
+              </div>
+            </div> 
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-car-engine"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Engine Repair</h3>
+                <p>This can include things like replacing a head gasket or belt or sealing an oil pan. Repairs must be caught early
+					 enough so that the damage doesn't extend to other parts, leading to an engine replacement if ignored for too long.</p>
+              </div>
+            </div>    
+          </div>
+
+          <div class="col-md-4 services ftco-animate">
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-tow-truck"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Tow Truck</h3>
+                <p>EA towing service is a professional service that involves the transportation of vehicles, 
+					typically those that are immobilized due to breakdowns, accidents, or legal issues, from one location to another.</p>
+              </div>
+            </div>
+            <div class="d-block d-flex">
+              <div class="icon d-flex justify-content-center align-items-center">
+            		<span class="flaticon-repair"></span>
+              </div>
+              <div class="media-body pl-3">
+                <h3 class="heading">Car Maintenance</h3>
+                <p>a car tune up as well as replace consumable items such as motor oil, 
+					radiator coolant, brake fluid, power steering fluid, wiper blades and brake pads.</p>
+              </div>
+            </div>       
+          </div>
+        </div>
+    	</div>
+    </section>
+
+    <section class="ftco-counter" id="section-counter">
+    	<div class="container">
+				<div class="row">
+          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="45">0</strong>
+              </div>
+              <div class="text">
+              	<span>Years of Experienced</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="8500">0</strong>
+              </div>
+              <div class="text">
+              	<span>Project completed</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="2342">0</strong>
+              </div>
+              <div class="text">
+              	<span>Happy Customers</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+            <div class="block-18 text-center">
+              <div class="text">
+                <strong class="number" data-number="30">0</strong>
+              </div>
+              <div class="text">
+              	<span>Award Winning</span>
+              </div>
+            </div>
+          </div>
+        </div>
+    	</div>
+    </section>
+
+    <section class="ftco-section testimony-section bg-light">
+      <div class="container">
+        <div class="row justify-content-center pb-5 mb-3">
+          <div class="col-md-7 heading-section heading-section-white text-center ftco-animate">
+          	<span class="subheading">Testimonies</span>
+            <h2>Happy Clients &amp; Feedbacks</h2>
+          </div>
+        </div>
+        <div class="row ftco-animate">
+          <div class="col-md-12">
+            <div class="carousel-testimony owl-carousel ftco-owl">
+              <div class="item">
+                <div class="testimony-wrap py-4">
+                	<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-quote-left"></span></div>
+                  <div class="text">
+                    <p class="mb-4">Really liked this!!</p>
+                    <div class="d-flex align-items-center">
+                    	<div class="user-img" style="background-image: url('../static/images/thomas_shelby.jpg');"></div>
+                    	<div class="pl-3">
+		                    <p class="name">Thomas Shelby</p>
+		                    <span class="position">Celebraty</span>
+		                  </div>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap py-4">
+                	<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-quote-left"></span></div>
+                  <div class="text">
+                    <p class="mb-4">Very Helpful</p>
+                    <div class="d-flex align-items-center">
+                    	<div class="user-img" style="background-image: url('../static/images/jhonny_depp.jpg');"></div>
+                    	<div class="pl-3">
+		                    <p class="name">Jack Sparrow</p>
+		                    <span class="position">Captain</span>
+		                  </div>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap py-4">
+                	<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-quote-left"></span></div>
+                  <div class="text">
+                    <p class="mb-4">Using this for past 2 years</p>
+                    <div class="d-flex align-items-center">
+                    	<div class="user-img" style="background-image: url('../static/images/tony_stark.png');"></div>
+                    	<div class="pl-3">
+		                    <p class="name">Tony Stark</p>
+		                    <span class="position">Billionare</span>
+		                  </div>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap py-4">
+                	<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-quote-left"></span></div>
+                  <div class="text">
+                    <p class="mb-4">Awesome experience</p>
+                    <div class="d-flex align-items-center">
+                    	<div class="user-img" style="background-image: url('../static/images/x_men.avif');"></div>
+                    	<div class="pl-3">
+		                    <p class="name">Logan</p>
+		                    <span class="position">Rescue Team</span>
+		                  </div>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <div class="testimony-wrap py-4">
+                	<div class="icon d-flex align-items-center justify-content-center"><span class="fa fa-quote-left"></span></div>
+                  <div class="text">
+                    <p class="mb-4">Loved this app</p>
+                    <div class="d-flex align-items-center">
+                    	<div class="user-img" style="background-image: url('../static/images/person_21.jpg');"></div>
+                    	<div class="pl-3">
+		                    <p class="name">Van Diesel</p>
+		                    <span class="position">Car Racing</span>
+		                  </div>
+	                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+		
+		<section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center pb-5 mb-3">
+          <div class="col-md-7 heading-section text-center ftco-animate">
+          	<span class="subheading">News &amp; Blog</span>
+            <h2>Latest news from our blog</h2>
+          </div>
+        </div>
+        <div class="row d-flex">
+          <div class="col-md-4 d-flex ftco-animate">
+            <div class="blog-entry align-self-stretch">
+              <a href="/" class="block-20 rounded" style="background-image: url('../static/images/image_1.jpg');">
+              </a>
+              <div class="text mt-3">
+              	<div class="posted mb-3 d-flex">
+              		<div class="img author" style="background-image: url('../static/images/person_3.jpg');"></div>
+              		<div class="desc pl-3">
+              			<span>Posted by John doe</span>
+              			<span>24 February 2020</span>
+              		</div>
+              	</div>
+                <h3 class="heading"><a href="/">Best wheel alignment &amp; air conditioning</a></h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 d-flex ftco-animate">
+            <div class="blog-entry align-self-stretch">
+              <a href="/" class="block-20 rounded" style="background-image: url('../static/images/image_2.jpg');">
+              </a>
+              <div class="text mt-3">
+              	<div class="posted mb-3 d-flex">
+              		<div class="img author" style="background-image: url('../static/images/person_3.jpg');"></div>
+              		<div class="desc pl-3">
+              			<span>Posted by John doe</span>
+              			<span>24 February 2020</span>
+              		</div>
+              	</div>
+                <h3 class="heading"><a href="/">Best wheel alignment &amp; air conditioning</a></h3>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 d-flex ftco-animate">
+            <div class="blog-entry align-self-stretch">
+              <a href="/" class="block-20 rounded" style="background-image: url('../static/images/image_3.jpg');">
+              </a>
+              <div class="text mt-3">
+              	<div class="posted mb-3 d-flex">
+              		<div class="img author" style="background-image: url('../static/images/person_1.jpg');"></div>
+              		<div class="desc pl-3">
+              			<span>Posted by John doe</span>
+              			<span>24 February 2020</span>
+              		</div>
+              	</div>
+                <h3 class="heading"><a href="/">Best wheel alignment &amp; air conditioning</a></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ftco-section ftco-no-pb">
+			<div class="container">
+				<div class="row justify-content-center pb-5 mb-3">
+          <div class="col-md-7 heading-section text-center ftco-animate">
+          	<span class="subheading">Projects</span>
+            <h2>Done Projects</h2>
+          </div>
+        </div>
+			</div>
+			<div class="container-fluid px-md-0">
+				<div class="row no-gutters">
+          <div class="col-md-3 ftco-animate">
+            <div class="work img d-flex align-items-end" style="background-image: url('../static/images/work-1.jpg');">
+            	<a href="{% static 'images/work-1.jpg' %}" class="icon image-popup d-flex justify-content-center align-items-center">
+	    					<span class="fa fa-expand"></span>
+	    				</a>
+            	<div class="desc w-100 px-4">
+	              <div class="text w-100 mb-3">
+	              	<span>Engine</span>
+	              	<h2><a href="work-single.html">Engine Testing Complated</a></h2>
+	              </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 ftco-animate">
+            <div class="work img d-flex align-items-end" style="background-image: url('../static/images/work-2.jpg');">
+            	<a href="{% static 'images/work-2.jpg' %}" class="icon image-popup d-flex justify-content-center align-items-center">
+	    					<span class="fa fa-expand"></span>
+	    				</a>
+            	<div class="desc w-100 px-4">
+	              <div class="text w-100 mb-3">
+	              	<span>Oil Change</span>
+	              	<h2><a href="work-single.html">Change Oil Completed</a></h2>
+	              </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 ftco-animate">
+            <div class="work img d-flex align-items-end" style="background-image: url('../static/images/work-3.jpg');">
+            	<a href="{% static 'images/work-3.jpg' %}" class="icon image-popup d-flex justify-content-center align-items-center">
+	    					<span class="fa fa-expand"></span>
+	    				</a>
+            	<div class="desc w-100 px-4">
+	              <div class="text w-100 mb-3">
+	              	<span>Engine</span>
+	              	<h2><a href="work-single.html">Engine Diagnostics</a></h2>
+	              </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 ftco-animate">
+            <div class="work img d-flex align-items-end" style="background-image: url('../static/images/work-4.jpg');">
+            	<a href="{% static 'images/work-4.jpg' %}" class="icon image-popup d-flex justify-content-center align-items-center">
+	    					<span class="fa fa-expand"></span>
+	    				</a>
+            	<div class="desc w-100 px-4">
+	              <div class="text w-100 mb-3">
+	              	<span>Tire</span>
+	              	<h2><a href="work-single.html">Tire Change</a></h2>
+	              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+			</div>
+		</section>	
+
+    <footer class="footer ftco-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-md-6 col-lg">
+            <div class="ftco-footer-widget mb-4">
+              <h2 class="logo"><a href="/">Autorepair<span>.</span></a></h2>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg">
+            <div class="ftco-footer-widget mb-4 ml-md-5">
+              <h2 class="ftco-heading-2">Services</h2>
+              <ul class="list-unstyled">
+                <li><a href="#" class="py-1 d-block"><span class="fa fa-check mr-3"></span>Oil Change</a></li>
+                <li><a href="#" class="py-1 d-block"><span class="fa fa-check mr-3"></span>Batteries</a></li>
+                <li><a href="#" class="py-1 d-block"><span class="fa fa-check mr-3"></span>Tow Truck</a></li>
+                <li><a href="#" class="py-1 d-block"><span class="fa fa-check mr-3"></span>Tire Change</a></li>
+                <li><a href="#" class="py-1 d-block"><span class="fa fa-check mr-3"></span>Engine Repair</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg">
+            <div class="ftco-footer-widget mb-4">
+            	<h2 class="ftco-heading-2">Contact information</h2>
+            	<div class="block-23 mb-3">
+	              <ul>
+	                <li><span class="icon fa fa-map-marker"></span><span class="text">Near JLN Stadium Kaloor Ernakulm</span></li>
+	                <li><a href="#"><span class="icon fa fa-phone"></span><span class="text">+91 9876543212</span></a></li>
+	                <li><a href="#"><span class="icon fa fa-paper-plane"></span><span class="text">info@autorepair.com</span></a></li>
+	              </ul>
+	            </div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg">
+             <div class="ftco-footer-widget mb-4">
+              <h2 class="ftco-heading-2">Follow us</h2>
+              <div class="opening-hours">
+				<p class="mb-0 d-flex">
+					<ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-4">
+						<li class="ftco-animate"><a href="#"><span class="fa fa-twitter"></span></a></li>
+						<li class="ftco-animate"><a href="#"><span class="fa fa-facebook"></span></a></li>
+						<li class="ftco-animate"><a href="#"><span class="fa fa-instagram"></span></a></li>
+					</ul>
+				</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+
+            <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved 
+  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+  
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+  <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+  <script src="{% static 'js/jquery.animateNumber.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+  <script src="{% static 'js/jquery.timepicker.min.js' %}"></script>
+  <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'js/scrollax.min.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+    
+  </body>
+</html>
