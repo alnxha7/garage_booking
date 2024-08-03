@@ -39,12 +39,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return self.is_superuser or super().has_module_perms(app_label)
-    
+
 class Garage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     location = models.CharField(max_length=255)
     phone = models.CharField(max_length=12)
-    images = models.ImageField(upload_to='garage_images/', blank=True)
+    images = models.ImageField(upload_to='garage_images/', blank=True, null=True)
     approved = models.BooleanField(default=False)
-
 

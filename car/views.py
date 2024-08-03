@@ -20,7 +20,7 @@ def login(request):
                 if user.role == 'user':
                     return redirect('user_index')
                 else:
-                    return redirect('user_index')  # Adjust this to the correct URL name for 'garage' or other roles
+                    return redirect('garage_index')  # Adjust this to the correct URL name for 'garage' or other roles
             else:
                 messages.error(request, 'Invalid email or password.')
                 print(f'Authentication failed for email: {email}')  # Debugging line to check failed attempts
@@ -61,6 +61,7 @@ def register_centre(request):
             if phone and phone.isdigit() and len(phone) == 10:
                 user = User.objects.create_user(username=username, email=email, password=password, role=role)
                 user.save()
+
                 garage = Garage.objects.create(
                     user=user,
                     location=location,
@@ -89,3 +90,15 @@ def view_service_centers(request):
         'user': request.user,
     }
     return render(request, 'view_service_centers.html', context)
+
+@login_required
+def garage_index(request):
+    return render(request, 'garage_index.html')
+
+@login_required
+def user_requests(request):
+    return render(request, 'user_requests.html')
+
+@login_required
+def my_schedules(request):
+    return render(request, 'my_schedules.html')

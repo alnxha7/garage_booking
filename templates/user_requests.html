@@ -66,8 +66,9 @@
 	      </button>
 	      <div class="collapse navbar-collapse" id="ftco-nav">
 	        <ul class="navbar-nav mr-auto">
-	        	<li class="nav-item active"><a href="{% url 'user_index' %}" class="nav-link">Home</a></li>
-	        	<li class="nav-item"><a href="{% url 'view_service_centers' %}" class="nav-link">Service Centers</a></li>
+	        	<li class="nav-item"><a href="{% url 'garage_index' %}" class="nav-link">Home</a></li>
+	        	<li class="nav-item active"><a href="{% url 'user_requests' %}" class="nav-link">View Requests</a></li>
+                <li class="nav-item"><a href="{% url 'my_schedules' %}" class="nav-link">My Schedules</a></li>
                 <li class="nav-item"><a href="/" class="nav-link">Logout</a></li>
 	        </ul>
 	      </div>
@@ -84,7 +85,7 @@
 		          	<div class="text w-100">
 		          		<h2>We are best car repair services</h2>
 			            <h1 class="mb-4">Make your car last longer</h1>
-			            <p><a href="{% url 'view_service_centers' %}" class="btn btn-primary">Book an appointment</a></p>
+			            <p><a href="#" class="btn btn-primary">Book an appointment</a></p>
 		            </div>
 		          </div>
 		        </div>
@@ -99,7 +100,7 @@
 		          	<div class="text w-100">
 		          		<h2>We care about your car</h2>
 			            <h1 class="mb-4">It's time to come to repair your car</h1>
-			            <p><a href="{% url 'view_service_centers' %}" class="btn btn-primary">Book an appointment</a></p>
+			            <p><a href="#" class="btn btn-primary">Book an appointment</a></p>
 		            </div>
 		          </div>
 		        </div>
@@ -118,7 +119,7 @@
 							</div>
 							<h2 class="mb-0">Are you ready? <span>Let's fix it!</span></h2>
 						</div>
-						<a href="{% url 'view_service_centers' %}" class="bg-primary btn-custom d-flex align-items-center"><span>Book an Appointment</span></a>
+						<a href="#" class="bg-primary btn-custom d-flex align-items-center"><span>Book an Appointment</span></a>
 					</div>
 				</div>
 			</div>	

@@ -128,7 +128,7 @@
 	  </nav>
     <div class="registration-form">
       <h2 class="text-center">Register Garage</h2>
-      <form action="{% url 'register_centre' %}" method="post">
+      <form action="{% url 'register_centre' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
           <label for="username">Username</label>

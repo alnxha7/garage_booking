@@ -29,6 +29,10 @@ urlpatterns = [
 
     path('user_index/', views.user_index, name='user_index'),
     path('view_service_centers/', views.view_service_centers, name='view_service_centers'),
+
+    path('garage_index/', views.garage_index, name='garage_index'),
+    path('user_requests/', views.user_requests, name='user_requests'),
+    path('my_schedules/', views.my_schedules, name='my_schedules'),
     
 ]
 
