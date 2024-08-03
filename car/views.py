@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage
+from .models import User, Garage, GarageService
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 
@@ -96,8 +96,74 @@ def garage_index(request):
     return render(request, 'garage_index.html')
 
 @login_required
-def user_requests(request):
-    return render(request, 'user_requests.html')
+def garage_services(request):
+    garage = get_object_or_404(Garage, user=request.user)
+    services = GarageService.objects.filter(garage=garage)
+    
+    if request.method == 'POST':
+        if 'edit_service_id' in request.POST:
+            service_id = request.POST.get('edit_service_id')
+            service_name = request.POST.get('edit_service_name')
+            price = request.POST.get('edit_service_price')
+            max_per_slot = request.POST.get('edit_service_max_per_slot')
+
+            service = get_object_or_404(GarageService, id=service_id)
+            service.service_name = service_name
+            service.price = price
+            service.max_per_slot = max_per_slot
+            service.save()
+            return redirect('garage_services')
+    
+    return render(request, 'garage_services.html', {'services': services})
+
+@login_required
+def add_service(request):
+    if request.method == 'POST':
+        service_name = request.POST.get('service_name')
+        price = request.POST.get('price')
+        max_per_slot = request.POST.get('max_per_slot')
+
+        garage = get_object_or_404(Garage, user=request.user)
+
+        GarageService.objects.create(
+            garage=garage,
+            service_name=service_name,
+            price=price,
+            max_per_slot=max_per_slot
+        )
+        return redirect('garage_services')  # Redirect to the services page
+
+    garage = get_object_or_404(Garage, user=request.user)
+    services = GarageService.objects.filter(garage=garage)
+    return render(request, 'garage_services.html', {'services': services})
+
+@login_required
+def edit_service(request, service_id):
+    service = get_object_or_404(GarageService, id=service_id)
+
+    if request.method == 'POST':
+        service_name = request.POST.get('service_name')
+        price = request.POST.get('price')
+        max_per_slot = request.POST.get('max_per_slot')
+
+        service.service_name = service_name
+        service.price = price
+        service.max_per_slot = max_per_slot
+        service.save()
+
+        return redirect('garage_services')  # Redirect to the services page
+
+    return render(request, 'edit_service.html', {'service': service})
+
+@login_required
+def delete_service(request, service_id):
+    if request.method == 'POST':
+        service = GarageService.objects.get(id=service_id)
+        service.delete()
+        return redirect('garage_services')  # Redirect to the services page
+
+    # Redirect to the services page if not POST
+    return redirect('garage_services')
 
 @login_required
 def my_schedules(request):
