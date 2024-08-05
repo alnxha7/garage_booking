@@ -56,3 +56,8 @@ class GarageService(models.Model):
     def __str__(self):
         return f"{self.service_name} at {self.garage.location}"
     
+class Booking(models.Model):
+    garage_id = models.IntegerField()  # Assuming you store garage as an integer reference
+    date = models.DateField()
+    slot = models.CharField(max_length=30)
+    service = models.ForeignKey(GarageService, on_delete=models.CASCADE)

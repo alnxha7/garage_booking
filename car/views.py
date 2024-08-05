@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService
+from .models import User, Garage, GarageService, Booking
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 def home(request):
     return render(request, 'index.html')
@@ -165,6 +169,46 @@ def delete_service(request, service_id):
     # Redirect to the services page if not POST
     return redirect('garage_services')
 
-@login_required
 def my_schedules(request):
-    return render(request, 'my_schedules.html')
+    garage = get_object_or_404(Garage, user=request.user)
+    services = GarageService.objects.filter(garage=garage)
+    services_json = json.dumps(list(services.values('service_name', 'price')), cls=DjangoJSONEncoder)
+    return render(request, 'my_schedules.html', {'garage': garage, 'services_json': services_json})
+
+@csrf_exempt
+def book_service(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print(f"Received data: {data}")  # Debugging line
+
+            garage_id = data.get('garage_id')
+            date = data.get('date')
+            slot = data.get('timeSlot')
+            service_name = data.get('service')
+
+            # Debugging
+            print(f"Garage ID: {garage_id}")
+            print(f"Date: {date}")
+            print(f"Time Slot: {slot}")
+            print(f"Service Name: {service_name}")
+
+            # Fetch service
+            try:
+                service = GarageService.objects.get(service_name=service_name)
+            except GarageService.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Service not found'})
+
+            booking = Booking(
+                garage_id=garage_id,
+                date=date,
+                slot=slot,
+                service=service
+            )
+            booking.save()
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            print(f"Error: {str(e)}")  # Debugging line
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

@@ -248,30 +248,39 @@
   
       <!-- Time Slot Modal -->
       <div id="timeSlotModal" class="modal">
-          <div class="modal-content">
-              <span class="close" onclick="closeModal()">&times;</span>
-              <h2>Select Time Slot</h2>
-              <form id="timeSlotForm">
-                  <label class="time-slot-radio">
-                      <input type="radio" name="timeSlot" value="10-12">
-                      10 AM - 12 PM
-                  </label>
-                  <label class="time-slot-radio">
-                      <input type="radio" name="timeSlot" value="12-2">
-                      12 PM - 2 PM
-                  </label>
-                  <label class="time-slot-radio">
-                      <input type="radio" name="timeSlot" value="2-4">
-                      2 PM - 4 PM
-                  </label>
-                  <label class="time-slot-radio">
-                      <input type="radio" name="timeSlot" value="4-6">
-                      4 PM - 6 PM
-                  </label>
-                  <button type="button" onclick="submitTimeSlot()">Submit</button>
-              </form>
-          </div>
-      </div>
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Select Service and Time Slot</h2>
+            <form id="serviceTimeSlotForm">
+                <input type="hidden" id="garage_id" name="garage_id" value="{{ garage.id }}">
+                <input type="hidden" id="selectedDate" name="date">
+
+                <label for="serviceSelect">Select Service:</label>
+                <select id="serviceSelect" name="service">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+                
+                <h3>Select Time Slot</h3>
+                <label class="time-slot-radio">
+                    <input type="radio" name="timeSlot" value="10-12">
+                    10 AM - 12 PM
+                </label>
+                <label class="time-slot-radio">
+                    <input type="radio" name="timeSlot" value="12-2">
+                    12 PM - 2 PM
+                </label>
+                <label class="time-slot-radio">
+                    <input type="radio" name="timeSlot" value="2-4">
+                    2 PM - 4 PM
+                </label>
+                <label class="time-slot-radio">
+                    <input type="radio" name="timeSlot" value="4-6">
+                    4 PM - 6 PM
+                </label>
+                <button type="button" id="bookButton" onclick="submitServiceTimeSlot()">Submit</button>
+            </form>
+        </div>
+    </div>
       </div>
     </section>
 
@@ -384,21 +393,67 @@
         }
     }
 
-    function showTimeSlotModal(dateString) {
-        var modal = document.getElementById('timeSlotModal');
-        var timeSlotForm = document.getElementById('timeSlotForm');
-        timeSlotForm.setAttribute('data-date', dateString);
-        modal.style.display = 'block';
+    document.addEventListener('DOMContentLoaded', function() {
+        const services = JSON.parse('{{services_json|escapejs}}');
+        populateServices(services);
+    });
+
+    function handleBooking(date, timeSlot, service) {
+    console.log('handleBooking called with:', date, timeSlot, service);
+    if (confirm(`Do you want to book ${date} for ${timeSlot} and ${service}?`)) {
+        const bookingData = {
+            date: date,
+            timeSlot: timeSlot,
+            service: service
+        };
+        sendBookingRequest(bookingData);
+    } else {
+        alert('Booking was canceled.');
     }
+}
+
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check if this cookie string begins with the name we want
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+    function populateServices(services) {
+    const serviceSelect = document.getElementById('serviceSelect');
+    services.forEach(function(service) {
+        const option = document.createElement('option');
+        option.value = service.service_name;
+        option.textContent = service.service_name;
+        serviceSelect.appendChild(option);
+    });
+}
+
+function showTimeSlotModal(dateString) {
+    console.log('Showing modal for:', dateString); // Check if this is logged
+    var modal = document.getElementById('timeSlotModal');
+    var form = document.getElementById('serviceTimeSlotForm');
+    form.querySelector('#selectedDate').value = dateString; // Set the date in the hidden input field
+    modal.style.display = 'block';
+}
 
     function closeModal() {
-    var modal = document.getElementById('timeSlotModal');
-    modal.classList.add('fade-out');
-    setTimeout(() => {
-        modal.style.display = 'none';
-        modal.classList.remove('fade-out');
-    }, 300); // Match this duration with the animation time
-}
+        var modal = document.getElementById('timeSlotModal');
+        modal.classList.add('fade-out');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            modal.classList.remove('fade-out');
+        }, 300); // Ensure this matches your CSS animation duration
+    }
 
     function submitTimeSlot() {
         var form = document.getElementById('timeSlotForm');
@@ -413,58 +468,100 @@
         }
     }
 
-    function handleBooking(date, timeSlot) {
-        if (confirm(`Do you want to book ${date} for ${timeSlot}?`)) {
-            sendBookingRequest(date, timeSlot, true); // Set book to true for booking
+    function submitServiceTimeSlot() {
+    const form = document.getElementById('serviceTimeSlotForm');
+    const formData = new FormData(form);
+
+    const data = {
+        garage_id: formData.get('garage_id'),  // Ensure this field exists in your form
+        date: formData.get('date'),  // Ensure this field exists in your form
+        timeSlot: formData.get('timeSlot'),
+        service: formData.get('service')
+    };
+
+    const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} and ${data.service}?`;
+
+    if (confirm(confirmationMessage)) {
+        fetch('/book_service/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')  // Ensure getCookie function is defined correctly
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Booking successful!');
+                closeModal();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert('Booking was canceled.');
+    }
+}
+function sendBookingRequest(data) {
+    const csrftoken = getCookie('csrftoken');
+
+    fetch('/book_service/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+    })
+    .then(result => {
+        if (result.status === 'success') {
+            alert('Booking successful');
+        } else {
+            alert('Booking failed: ' + result.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+    function jumpToDate() {
+        const dateInput = document.getElementById('datePicker').value;
+        if (dateInput) {
+            const [year, month, day] = dateInput.split('-').map(Number);
+            generateCalendar(year, month - 1); // month is zero-based
+        } else {
+            alert('Please select a date.');
         }
     }
 
-    function sendBookingRequest(date, timeSlot, book) {
-        var xhr = new XMLHttpRequest();
-        var url = ""; // Set your URL here
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    if (response.status === 'booked') {
-                        console.log('Booking successful');
-                    } else if (response.status === 'cancelled') {
-                        console.log('Booking cancelled');
-                    }
-                } else {
-                    console.error('Booking request failed:', xhr.status);
-                }
-            }
-        };
-        var data = JSON.stringify({
-            'date': date,
-            'timeSlot': timeSlot,
-            'book': book
-        });
-        xhr.send(data);
-    }
-
-    function jumpToDate() {
-        var datePicker = document.getElementById('datePicker');
-        var selectedDate = new Date(datePicker.value);
-        currentYear = selectedDate.getFullYear();
-        currentMonth = selectedDate.getMonth();
-        generateCalendar(currentYear, currentMonth);
-    }
-
     function jumpToToday() {
-        currentYear = new Date().getFullYear();
-        currentMonth = new Date().getMonth();
-        generateCalendar(currentYear, currentMonth);
+        const today = new Date();
+        generateCalendar(today.getFullYear(), today.getMonth());
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        generateCalendar(currentYear, currentMonth);
+        // Initialize calendar with current month
+        generateCalendar(new Date().getFullYear(), new Date().getMonth());
+
+        // Bind form submission to the submit button
+        document.querySelector('#serviceTimeSlotForm button[type="button"]').addEventListener('click', submitTimeSlot);
     });
-</script>
+
+    document.getElementById('bookButton').addEventListener('click', function() {
+    const date = document.getElementById('dateInput').value;
+    const timeSlot = document.getElementById('timeSlotInput').value;
+    const service = document.getElementById('serviceInput').value;
+
+    handleBooking(date, timeSlot, service);
+})
+  </script>
   <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>
   <script src="{% static 'js/popper.min.js' %}"></script>
