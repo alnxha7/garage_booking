@@ -207,6 +207,18 @@ def book_service(request):
             except GarageService.DoesNotExist:
                 return JsonResponse({'status': 'error', 'message': 'Service not found'})
 
+            # Check max_per_slot constraint
+            existing_bookings = Booking.objects.filter(
+                garage_id=garage_id,
+                date=date,
+                slot=slot,
+                service=service
+            ).count()
+
+            if existing_bookings >= service.max_per_slot:
+                return JsonResponse({'status': 'error', 'message': 'This slot is fully booked'})
+
+            # Create booking
             booking = Booking(
                 garage_id=garage_id,
                 date=date,
@@ -215,6 +227,7 @@ def book_service(request):
             )
             booking.save()
             return JsonResponse({'status': 'success'})
+
         except Exception as e:
             print(f"Error: {str(e)}")  # Debugging line
             return JsonResponse({'status': 'error', 'message': str(e)})
