@@ -34,8 +34,11 @@ urlpatterns = [
     path('garage_services/', views.garage_services, name='garage_services'),
     path('add-service/', views.add_service, name='add_service'),
     path('delete-service/<int:service_id>/', views.delete_service, name='delete_service'),
+
     path('my_schedules/', views.my_schedules, name='my_schedules'),
     path('book_service/', views.book_service, name='book_service'),
+    path('reserved_bookings/<int:garage_id>/', views.reserved_bookings, name='reserved_bookings'),
+    path('delete_booking/<int:booking_id>/', views.delete_booking, name='delete_booking'),
     
 ]
 

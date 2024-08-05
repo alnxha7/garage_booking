@@ -97,7 +97,11 @@ def view_service_centers(request):
 
 @login_required
 def garage_index(request):
-    return render(request, 'garage_index.html')
+     garage = get_object_or_404(Garage, user=request.user)
+     context = {
+        'garage': garage,
+    }
+     return render(request, 'garage_index.html', context)
 
 @login_required
 def garage_services(request):
@@ -118,7 +122,10 @@ def garage_services(request):
             service.save()
             return redirect('garage_services')
     
-    return render(request, 'garage_services.html', {'services': services})
+    return render(request, 'garage_services.html', {
+        'services': services,
+        'garage': garage,  # Ensure this is passed to the template
+    })
 
 @login_required
 def add_service(request):
@@ -169,6 +176,7 @@ def delete_service(request, service_id):
     # Redirect to the services page if not POST
     return redirect('garage_services')
 
+@login_required
 def my_schedules(request):
     garage = get_object_or_404(Garage, user=request.user)
     services = GarageService.objects.filter(garage=garage)
@@ -212,3 +220,19 @@ def book_service(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@login_required
+def reserved_bookings(request, garage_id):
+    garage = get_object_or_404(Garage, id=garage_id)
+    bookings = Booking.objects.filter(garage_id=garage_id)
+    context = {
+        'bookings': bookings,
+        'garage': garage,
+    }
+    return render(request, 'reserved_bookings.html', context)
+
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    garage_id = booking.garage_id
+    booking.delete()
+    return redirect('reserved_bookings', garage_id=garage_id)

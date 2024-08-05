@@ -213,6 +213,7 @@
 	        	<li class="nav-item"><a href="{% url 'garage_index' %}" class="nav-link">Home</a></li>
 	        	<li class="nav-item"><a href="{% url 'garage_services' %}" class="nav-link">My Services</a></li>
                 <li class="nav-item active"><a href="{% url 'my_schedules' %}" class="nav-link">My Schedules</a></li>
+                <li class="nav-item"><a href="{% url 'reserved_bookings' garage_id=garage.id %}" class="nav-link">Reserved Bookings</a></li>
                 <li class="nav-item"><a href="/" class="nav-link">Logout</a></li>
 	        </ul>
 	      </div>
@@ -555,12 +556,21 @@ function sendBookingRequest(data) {
     });
 
     document.getElementById('bookButton').addEventListener('click', function() {
-    const date = document.getElementById('dateInput').value;
-    const timeSlot = document.getElementById('timeSlotInput').value;
-    const service = document.getElementById('serviceInput').value;
+    const dateInput = document.getElementById('dateInput'); // Ensure 'dateInput' exists
+    const timeSlotInput = document.querySelector('input[name="timeSlot"]:checked'); // Ensure 'timeSlotInput' exists
+    const serviceSelect = document.getElementById('serviceSelect'); // Ensure 'serviceSelect' exists
 
-    handleBooking(date, timeSlot, service);
-})
+    if (dateInput && timeSlotInput && serviceSelect) {
+        const date = dateInput.value;
+        const timeSlot = timeSlotInput.value;
+        const service = serviceSelect.value;
+
+        handleBooking(date, timeSlot, service);
+    } else {
+        console.error('One or more elements are missing!');
+    }
+});
+
   </script>
   <script src="{% static 'js/jquery.min.js' %}"></script>
   <script src="{% static 'js/jquery-migrate-3.0.1.min.js' %}"></script>

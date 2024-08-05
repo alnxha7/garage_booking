@@ -41,6 +41,40 @@
   font-size: 0.9rem;
   color: #666;
 }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    animation: fadeIn 1s ease-out;
+  }
+
+  thead {
+    background-color: #f8f9fa;
+  }
+
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  tr:hover td {
+    background-color: #f1f1f1;
+    transform: scale(1.02);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
     </style>
   </head>
   <body>
@@ -88,9 +122,9 @@
 	      <div class="collapse navbar-collapse" id="ftco-nav">
 	        <ul class="navbar-nav mr-auto">
 	        	<li class="nav-item"><a href="{% url 'garage_index' %}" class="nav-link">Home</a></li>
-	        	<li class="nav-item active"><a href="{% url 'garage_services' %}" class="nav-link">My Services</a></li>
+	        	<li class="nav-item"><a href="{% url 'garage_services' %}" class="nav-link">My Services</a></li>
                 <li class="nav-item"><a href="{% url 'my_schedules' %}" class="nav-link">My Schedules</a></li>
-                <li class="nav-item"><a href="{% url 'reserved_bookings' garage_id=garage.id %}" class="nav-link">Reserved Bookings</a></li>
+                <li class="nav-item active"><a href="{% url 'reserved_bookings' garage_id=garage.id %}" class="nav-link">Reserved Bookings</a></li>
                 <li class="nav-item"><a href="/" class="nav-link">Logout</a></li>
 	        </ul>
 	      </div>
@@ -99,83 +133,41 @@
     <!-- END nav -->
 
     <section class="ftco-section">
-      <div class="container">
-          <span>Service Provides by</span><h1>{{ user.username }}</h1>
-          <form method="post" action="{% url 'add_service' %}" class="bg-light p-5">
-              <h4 class="mb-4">Add a New Service</h4>
-              {% csrf_token %}
-              <div class="form-group">
-                  <label for="service_name">Service Name</label>
-                  <input type="text" id="service_name" name="service_name" class="form-control" required>
-              </div>
-              <div class="form-group">
-                  <label for="price">Price</label>
-                  <input type="number" id="price" name="price" class="form-control" step="0.01" required>
-              </div>
-              <div class="form-group">
-                  <label for="max_per_slot">Max Per Slot</label>
-                  <input type="number" id="max_per_slot" name="max_per_slot" class="form-control" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Add Service</button>
-          </form>
-      
-          <h2 class="mb-4 mt-5">Existing Services</h2>
-          <ul class="list-unstyled">
-              {% for service in services %}
-              <li class="list-group-item">
-                  <div class="service-info">
-                      <strong>{{ service.service_name }}</strong>
-                      <span class="price">Rs: {{ service.price }}</span>
-                      <span class="max-per-slot">Max Per Slot: {{ service.max_per_slot }}</span>
-                      <a href="#" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal{{ service.id }}">Edit</a>
-                      <form method="post" action="{% url 'delete_service' service.id %}" style="display:inline;">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                      </form>
-                  </div>
-              </li>
-
-              <!-- Modal for Editing Service -->
-              <div class="modal fade" id="editModal{{ service.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ service.id }}" aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                          <div class="modal-header">
-                              <h5 class="modal-title" id="editModalLabel{{ service.id }}">Edit Service</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                  <span aria-hidden="true">&times;</span>
-                              </button>
-                          </div>
-                          <form method="post" action="{% url 'garage_services' %}">
-                              {% csrf_token %}
-                              <div class="modal-body">
-                                  <input type="hidden" name="edit_service_id" value="{{ service.id }}">
-                                  <div class="form-group">
-                                      <label for="edit_service_name{{ service.id }}">Service Name</label>
-                                      <input type="text" id="edit_service_name{{ service.id }}" name="edit_service_name" class="form-control" value="{{ service.service_name }}" required>
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="edit_service_price{{ service.id }}">Price</label>
-                                      <input type="number" id="edit_service_price{{ service.id }}" name="edit_service_price" class="form-control" value="{{ service.price }}" step="0.01" required>
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="edit_service_max_per_slot{{ service.id }}">Max Per Slot</label>
-                                      <input type="number" id="edit_service_max_per_slot{{ service.id }}" name="edit_service_max_per_slot" class="form-control" value="{{ service.max_per_slot }}" required>
-                                  </div>
-                              </div>
-                              <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-primary">Save changes</button>
-                              </div>
-                          </form>
-                      </div>
-                  </div>
-              </div>
-              {% empty %}
-              <li>No services available.</li>
-              {% endfor %}
-          </ul>
-      </div>
-  </section>
+        <div class="container">
+          <h1>Bookings for Garage: {{ user.username }}</h1>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time Slot</th>
+                  <th>Service</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for booking in bookings %}
+                <tr>
+                  <td>{{ booking.date }}</td>
+                  <td>{{ booking.slot }}</td>
+                  <td>{{ booking.service.service_name }}</td>
+                  <td>
+                    <form method="post" action="{% url 'delete_booking' booking.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4">No bookings available</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
     <footer class="footer ftco-section">
       <div class="container">
