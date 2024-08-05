@@ -96,6 +96,25 @@ def view_service_centers(request):
     return render(request, 'view_service_centers.html', context)
 
 @login_required
+def garage_details(request):
+    if request.method == 'GET':
+        garage_id = request.GET.get('id')
+        
+        # Using get_object_or_404 for better error handling
+        garage = get_object_or_404(Garage, id=garage_id)
+        
+        # Fetch related services
+        services = list(garage.services.values('service_name', 'price', 'max_per_slot'))
+        
+        data = {
+            'location': garage.location,
+            'phone': garage.phone,
+            'services': services,
+        }
+        
+        return JsonResponse(data)
+
+@login_required
 def garage_index(request):
      garage = get_object_or_404(Garage, user=request.user)
      context = {
