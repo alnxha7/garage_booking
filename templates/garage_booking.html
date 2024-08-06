@@ -18,6 +18,68 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
+        .payment-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
+
+.payment-modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.payment-modal-content h2 {
+    margin-top: 0;
+}
+
+.payment-modal-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.payment-modal-content ul li {
+    margin-bottom: 10px;
+}
+
+.payment-modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.payment-modal .close:hover,
+.payment-modal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#proceedPaymentButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#proceedPaymentButton:hover {
+    background-color: #0056b3;
+}
+
+
      .service-checkbox-container {
     display: flex;
     flex-direction: column; /* Arrange items vertically */
@@ -294,6 +356,24 @@
                     </form>
                 </div>
             </div>
+
+            <div id="paymentModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closePaymentModal()">&times;</span>
+                    <h2>Confirm Your Booking</h2>
+                    <form id="paymentForm">
+                        <p><strong>Garage:</strong> <span id="modalGarageName"></span></p>
+                        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                        <p><strong>Time Slot:</strong> <span id="modalTimeSlot"></span></p>
+                        <p><strong>Services:</strong></p>
+                        <ul id="modalServicesList"></ul>
+                        <h5><strong>Total Amount: </strong><h4 id="modalTotalAmount"></h4></h5>
+                        <button type="button" id="proceedPaymentButton">Proceed to Payment</button>
+                    </form>
+                </div>
+            </div>
+
+
         </div>
     </section>
 
@@ -373,48 +453,48 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script>
         var currentYear = new Date().getFullYear();
-    var currentMonth = new Date().getMonth();
-
-    function generateCalendar(year, month) {
-        var firstDay = new Date(year, month, 1).getDay();
-        var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
-        var endDate = new Date(year, month + 1, 0);
-        var calendarBody = document.querySelector('#calendar tbody');
-        calendarBody.innerHTML = '';
-
-        for (var i = 0; i < 6; i++) {
-            var row = document.createElement('tr');
-            for (var j = 0; j < 6; j++) {
-                var cell = document.createElement('td');
-                var cellDate = new Date(startDate);
-                cellDate.setDate(startDate.getDate() + j + i * 7);
-
-                if (cellDate.getMonth() !== month) {
-                    cell.appendChild(document.createTextNode(''));
-                } else {
-                    var cellText = document.createTextNode(cellDate.getDate());
-                    cell.appendChild(cellText);
-
-                    var dateString = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDate.getDate()).padStart(2, '0');
-                    if (cellDate < new Date()) {
-                        cell.classList.add('past-date');
+        var currentMonth = new Date().getMonth();
+    
+        function generateCalendar(year, month) {
+            var firstDay = new Date(year, month, 1).getDay();
+            var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
+            var endDate = new Date(year, month + 1, 0);
+            var calendarBody = document.querySelector('#calendar tbody');
+            calendarBody.innerHTML = '';
+    
+            for (var i = 0; i < 6; i++) {
+                var row = document.createElement('tr');
+                for (var j = 0; j < 7; j++) {
+                    var cell = document.createElement('td');
+                    var cellDate = new Date(startDate);
+                    cellDate.setDate(startDate.getDate() + j + i * 7);
+    
+                    if (cellDate.getMonth() !== month) {
+                        cell.appendChild(document.createTextNode(''));
                     } else {
-                        cell.onclick = (function(dateString) {
-                            return function() {
-                                showTimeSlotModal(dateString);
-                            }
-                        })(dateString);
+                        var cellText = document.createTextNode(cellDate.getDate());
+                        cell.appendChild(cellText);
+    
+                        var dateString = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDate.getDate()).padStart(2, '0');
+                        if (cellDate < new Date()) {
+                            cell.classList.add('past-date');
+                        } else {
+                            cell.onclick = (function(dateString) {
+                                return function() {
+                                    showTimeSlotModal(dateString);
+                                }
+                            })(dateString);
+                        }
+                        if (new Date().toDateString() === cellDate.toDateString()) {
+                            cell.classList.add('today');
+                        }
                     }
-                    if (new Date().toDateString() === cellDate.toDateString()) {
-                        cell.classList.add('today');
-                    }
+                    row.appendChild(cell);
                 }
-                row.appendChild(cell);
+                calendarBody.appendChild(row);
             }
-            calendarBody.appendChild(row);
         }
-    }
-
+    
         function jumpToDate() {
             const dateInput = document.getElementById('datePicker').value;
             if (dateInput) {
@@ -424,86 +504,114 @@
                 alert('Please select a date.');
             }
         }
-
+    
         function jumpToToday() {
             const today = new Date();
             generateCalendar(today.getFullYear(), today.getMonth());
         }
-
+    
         function showTimeSlotModal(dateString) {
             var modal = document.getElementById('timeSlotModal');
             var form = document.getElementById('serviceTimeSlotForm');
             form.querySelector('#selectedDate').value = dateString; // Set the date in the hidden input field
             modal.style.display = 'block';
         }
-
+    
         function closeModal() {
             var modal = document.getElementById('timeSlotModal');
             modal.style.display = 'none';
         }
-
+    
         function submitServiceTimeSlot() {
-    const form = document.getElementById('serviceTimeSlotForm');
-    const formData = new FormData(form);
+        const form = document.getElementById('serviceTimeSlotForm');
+        const formData = new FormData(form);
 
-    const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => checkbox.value);
-    const selectedServiceNames = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
+        // Extract selected services and their details
+        const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => {
+            // Access the label text
+            const label = checkbox.parentElement;
+            const textContent = label.textContent.trim();
+            const [name, priceText] = textContent.split(' - Rs: ');
+            const price = parseFloat(priceText) || 0;
 
-    const data = {
-        garage_id: formData.get('garage_id'),
-        date: formData.get('date'),
-        timeSlot: formData.get('timeSlot'),
-        services: selectedServices
-    };
-
-    const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${selectedServiceNames.join(', ')}?`;
-
-    if (confirm(confirmationMessage)) {
-        fetch('/book_service/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                alert('Booking successful!');
-                closeModal();
-            } else {
-                alert('Booking failed. Please try again.');
-            }
-        })
-        .catch(error => {
-            alert('An error occurred. Please try again.');
-            console.error('Error:', error);
+            return {
+                name: name.trim(),
+                price: price
+            };
         });
-    }
-    closeModal();
-}
 
-document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+        // Calculate total amount
+        const totalAmount = selectedServices.reduce((sum, service) => sum + service.price, 0).toFixed(2);
 
-        document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+        const data = {
+            garage_id: formData.get('garage_id'),
+            date: formData.get('date'),
+            timeSlot: formData.get('timeSlot'),
+            services: selectedServices
+        };
 
-        // Function to get CSRF token for AJAX requests
-        function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+        const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${data.services.map(service => service.name).join(', ')}?`;
+
+        if (confirm(confirmationMessage)) {
+            // Show payment modal
+            showPaymentModal(
+                'Garage Name Here', // Replace with dynamic garage name
+                data.date,
+                data.timeSlot,
+                data.services,
+                totalAmount
+            );
         }
-    }
-    return cookieValue;
-}
 
+        closeModal();
+    }
+    document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+    
+        document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+    
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        function showPaymentModal(garageName, date, timeSlot, services, totalAmount) {
+        var modal = document.getElementById('paymentModal');
+        document.getElementById('modalGarageName').innerText = garageName;
+        document.getElementById('modalDate').innerText = date;
+        document.getElementById('modalTimeSlot').innerText = timeSlot;
+
+        var servicesList = document.getElementById('modalServicesList');
+        servicesList.innerHTML = ''; // Clear previous services
+        services.forEach(function(service) {
+            var listItem = document.createElement('li');
+            listItem.innerText = `${service.name} - Rs: ${service.price.toFixed(2)}`;
+            servicesList.appendChild(listItem);
+        });
+
+        document.getElementById('modalTotalAmount').innerText = `Rs: ${totalAmount}`;
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('timeSlotModal');
+        modal.style.display = 'none';
+    }
+    
+        function closePaymentModal() {
+            var modal = document.getElementById('paymentModal');
+            modal.style.display = 'none';
+        }
+    
         // Initialize calendar
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
