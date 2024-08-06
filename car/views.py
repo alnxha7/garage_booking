@@ -263,8 +263,17 @@ def reserved_bookings(request, garage_id):
     }
     return render(request, 'reserved_bookings.html', context)
 
+@login_required
 def delete_booking(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     garage_id = booking.garage_id
     booking.delete()
     return redirect('reserved_bookings', garage_id=garage_id)
+
+def garage_booking(request, garage_id):
+    garage = get_object_or_404(Garage, id=garage_id)
+    context = {
+        'garage': garage,
+        'garage_id': garage_id,
+    }
+    return render(request, 'garage_booking.html', context)

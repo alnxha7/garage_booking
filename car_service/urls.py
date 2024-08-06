@@ -30,6 +30,7 @@ urlpatterns = [
     path('user_index/', views.user_index, name='user_index'),
     path('view_service_centers/', views.view_service_centers, name='view_service_centers'),
     path('garage-details/', views.garage_details, name='garage_details'),
+    path('garage_booking/<int:garage_id>/', views.garage_booking, name='garage_booking'),
 
     path('garage_index/', views.garage_index, name='garage_index'),
     path('garage_services/', views.garage_services, name='garage_services'),
