@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            max-width: 90%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+            text-align: center;
+            animation: bounceIn 1s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Payment Details</h1>
+        <form id="paymentForm" onsubmit="return validatePaymentForm()">
+            <label for="cardName">Name:</label>
+            <input type="text" id="cardName" name="cardName" required>
+
+            <label for="cardNumber">Card Number:</label>
+            <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" title="Card number must be exactly 16 digits">
+
+            <label for="cardCVV">CVV:</label>
+            <input type="text" id="cardCVV" name="cardCVV" required pattern="\d{3}" title="CVV must be exactly 3 digits">
+
+            <button type="submit">Submit Payment</button>
+        </form>
+    </div>
+    <script>
+        function validatePaymentForm() {
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardCVV = document.getElementById('cardCVV').value;
+            const name = document.getElementById('cardName').value;
+
+            const cardNumberPattern = /^\d{16}$/;
+            const cardCVVPattern = /^\d{3}$/;
+
+            if (!cardNumberPattern.test(cardNumber)) {
+                alert('Card number must be exactly 16 digits.');
+                return false; // Prevent form submission
+            }
+
+            if (!cardCVVPattern.test(cardCVV)) {
+                alert('CVV must be exactly 3 digits.');
+                return false; // Prevent form submission
+            }
+            window.location.href = "{% url 'success_page' %}";
+        return false; // Prevent default form submission
+    }
+    </script>
+</body>
+</html>

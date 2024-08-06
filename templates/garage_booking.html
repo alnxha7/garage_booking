@@ -657,6 +657,10 @@ function closePaymentModal() {
     modal.style.display = 'none';
 }
 
+document.getElementById('proceedPaymentButton').addEventListener('click', function() {
+    window.location.assign("{% url 'payment' %}");
+});
+
 
 // Initialize calendar
 document.addEventListener('DOMContentLoaded', function() {

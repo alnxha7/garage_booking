@@ -370,3 +370,9 @@ def check_availability(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+def payment(request):
+    return render(request, 'payment.html')
+
+def success_page(request):
+    return render(request, 'success.html')

@@ -44,6 +44,8 @@ urlpatterns = [
 
     path('book-service', views.book_service, name='book_service'),
     path('check_availability/', views.check_availability, name='check_availability'),
+    path('payment/', views.payment, name='payment'),
+    path('success/', views.success_page, name='success_page'),
     
 ]
 
