@@ -456,44 +456,44 @@
         var currentMonth = new Date().getMonth();
     
         function generateCalendar(year, month) {
-            var firstDay = new Date(year, month, 1).getDay();
-            var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
-            var endDate = new Date(year, month + 1, 0);
-            var calendarBody = document.querySelector('#calendar tbody');
-            calendarBody.innerHTML = '';
-    
-            for (var i = 0; i < 6; i++) {
-                var row = document.createElement('tr');
-                for (var j = 0; j < 7; j++) {
-                    var cell = document.createElement('td');
-                    var cellDate = new Date(startDate);
-                    cellDate.setDate(startDate.getDate() + j + i * 7);
-    
-                    if (cellDate.getMonth() !== month) {
-                        cell.appendChild(document.createTextNode(''));
+        var firstDay = new Date(year, month, 1).getDay();
+        var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
+        var endDate = new Date(year, month + 1, 0);
+        var calendarBody = document.querySelector('#calendar tbody');
+        calendarBody.innerHTML = '';
+
+        for (var i = 0; i < 6; i++) {
+            var row = document.createElement('tr');
+            for (var j = 0; j < 6; j++) {
+                var cell = document.createElement('td');
+                var cellDate = new Date(startDate);
+                cellDate.setDate(startDate.getDate() + j + i * 7);
+
+                if (cellDate.getMonth() !== month) {
+                    cell.appendChild(document.createTextNode(''));
+                } else {
+                    var cellText = document.createTextNode(cellDate.getDate());
+                    cell.appendChild(cellText);
+
+                    var dateString = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDate.getDate()).padStart(2, '0');
+                    if (cellDate < new Date()) {
+                        cell.classList.add('past-date');
                     } else {
-                        var cellText = document.createTextNode(cellDate.getDate());
-                        cell.appendChild(cellText);
-    
-                        var dateString = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDate.getDate()).padStart(2, '0');
-                        if (cellDate < new Date()) {
-                            cell.classList.add('past-date');
-                        } else {
-                            cell.onclick = (function(dateString) {
-                                return function() {
-                                    showTimeSlotModal(dateString);
-                                }
-                            })(dateString);
-                        }
-                        if (new Date().toDateString() === cellDate.toDateString()) {
-                            cell.classList.add('today');
-                        }
+                        cell.onclick = (function(dateString) {
+                            return function() {
+                                showTimeSlotModal(dateString);
+                            }
+                        })(dateString);
                     }
-                    row.appendChild(cell);
+                    if (new Date().toDateString() === cellDate.toDateString()) {
+                        cell.classList.add('today');
+                    }
                 }
-                calendarBody.appendChild(row);
+                row.appendChild(cell);
             }
+            calendarBody.appendChild(row);
         }
+    }
     
         function jumpToDate() {
             const dateInput = document.getElementById('datePicker').value;
