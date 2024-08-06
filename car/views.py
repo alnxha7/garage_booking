@@ -7,6 +7,9 @@ from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 def home(request):
     return render(request, 'index.html')
@@ -321,3 +324,49 @@ def book_service(request):
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
+@csrf_exempt
+def check_availability(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            garage_id = data.get('garage_id')
+            date = data.get('date')
+            time_slot = data.get('timeSlot')
+            selected_service_name = data.get('selected_service_name')
+
+            if not all([garage_id, date, time_slot, selected_service_name]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required parameters'})
+
+            # Retrieve the service associated with the garage and the selected service
+            service = GarageService.objects.filter(garage_id=garage_id, service_name=selected_service_name).first()
+            if not service:
+                return JsonResponse({'status': 'error', 'message': 'Service not found'})
+
+            # Get the garage name
+            garage_name = service.garage.user.username
+
+            # Check the number of bookings for the selected slot for this service
+            existing_bookings = Booking.objects.filter(
+                garage_id=garage_id,
+                date=date,
+                slot=time_slot,
+                service=service
+            ).count()
+
+            if existing_bookings >= service.max_per_slot:
+                return JsonResponse({'status': 'error', 'message': 'This slot is fully booked for the selected service'})
+            else:
+                # Retrieve all services for the garage
+                services = GarageService.objects.filter(garage_id=garage_id)
+                services_data = [{'name': svc.service_name, 'price': str(svc.price)} for svc in services]
+
+                return JsonResponse({
+                    'status': 'available',
+                    'garage_name': garage_name,
+                    'date': date,
+                    'timeSlot': time_slot,
+                    'services': services_data
+                })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

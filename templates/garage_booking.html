@@ -27,7 +27,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.5);
     padding-top: 60px;
 }
 
@@ -37,21 +37,24 @@
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-width: 600px; /* Limit max width for better responsiveness */
+    border-radius: 8px; /* Rounded corners */
+    animation: fadeIn 0.5s ease-in-out; /* Fade-in animation */
 }
 
-.payment-modal-content h2 {
-    margin-top: 0;
+/* Animation for modal fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.payment-modal-content ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.payment-modal-content ul li {
-    margin-bottom: 10px;
-}
-
+/* Close button styling */
 .payment-modal .close {
     color: #aaa;
     float: right;
@@ -66,19 +69,50 @@
     cursor: pointer;
 }
 
+/* Payment Form */
+.payment-form p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.payment-form ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.payment-form ul li {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
 #proceedPaymentButton {
     background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
 }
 
 #proceedPaymentButton:hover {
     background-color: #0056b3;
 }
 
+/* Add smooth transition to the modal */
+.modal-content {
+    transition: transform 0.3s ease-in-out;
+}
+
+.modal.fade-in .modal-content {
+    transform: translateY(0);
+}
+
+.modal.fade-out .modal-content {
+    transform: translateY(-20px);
+}
 
      .service-checkbox-container {
     display: flex;
@@ -453,9 +487,9 @@
     <script src="{% static 'js/main.js' %}"></script>
     <script>
         var currentYear = new Date().getFullYear();
-        var currentMonth = new Date().getMonth();
-    
-        function generateCalendar(year, month) {
+var currentMonth = new Date().getMonth();
+
+function generateCalendar(year, month) {
         var firstDay = new Date(year, month, 1).getDay();
         var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
         var endDate = new Date(year, month + 1, 0);
@@ -494,129 +528,141 @@
             calendarBody.appendChild(row);
         }
     }
-    
-        function jumpToDate() {
-            const dateInput = document.getElementById('datePicker').value;
-            if (dateInput) {
-                const [year, month, day] = dateInput.split('-').map(Number);
-                generateCalendar(year, month - 1); // month is zero-based
-            } else {
-                alert('Please select a date.');
-            }
-        }
-    
-        function jumpToToday() {
-            const today = new Date();
-            generateCalendar(today.getFullYear(), today.getMonth());
-        }
-    
-        function showTimeSlotModal(dateString) {
-            var modal = document.getElementById('timeSlotModal');
-            var form = document.getElementById('serviceTimeSlotForm');
-            form.querySelector('#selectedDate').value = dateString; // Set the date in the hidden input field
-            modal.style.display = 'block';
-        }
-    
-        function closeModal() {
-            var modal = document.getElementById('timeSlotModal');
-            modal.style.display = 'none';
-        }
-    
-        function submitServiceTimeSlot() {
-        const form = document.getElementById('serviceTimeSlotForm');
-        const formData = new FormData(form);
 
-        // Extract selected services and their details
-        const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => {
-            // Access the label text
-            const label = checkbox.parentElement;
-            const textContent = label.textContent.trim();
-            const [name, priceText] = textContent.split(' - Rs: ');
-            const price = parseFloat(priceText) || 0;
+function jumpToDate() {
+    const dateInput = document.getElementById('datePicker').value;
+    if (dateInput) {
+        const [year, month, day] = dateInput.split('-').map(Number);
+        generateCalendar(year, month - 1); // month is zero-based
+    } else {
+        alert('Please select a date.');
+    }
+}
 
-            return {
-                name: name.trim(),
-                price: price
-            };
-        });
+function jumpToToday() {
+    const today = new Date();
+    generateCalendar(today.getFullYear(), today.getMonth());
+}
 
-        // Calculate total amount
-        const totalAmount = selectedServices.reduce((sum, service) => sum + service.price, 0).toFixed(2);
+function showTimeSlotModal(dateString) {
+    var modal = document.getElementById('timeSlotModal');
+    var form = document.getElementById('serviceTimeSlotForm');
+    form.querySelector('#selectedDate').value = dateString; // Set the date in the hidden input field
+    modal.style.display = 'block';
+}
 
-        const data = {
-            garage_id: formData.get('garage_id'),
-            date: formData.get('date'),
-            timeSlot: formData.get('timeSlot'),
-            services: selectedServices
+function closeModal() {
+    var modal = document.getElementById('timeSlotModal');
+    modal.style.display = 'none';
+}
+
+function submitServiceTimeSlot() {
+    const form = document.getElementById('serviceTimeSlotForm');
+    const formData = new FormData(form);
+
+    // Collect selected services with their prices
+    const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => {
+        const label = checkbox.parentElement;
+        const textContent = label.textContent.trim();
+        const [name, priceText] = textContent.split(' - Rs: ');
+        const price = parseFloat(priceText) || 0;
+
+        return {
+            name: name.trim(),
+            price: price
         };
+    });
 
-        const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${data.services.map(service => service.name).join(', ')}?`;
+    const totalAmount = selectedServices.reduce((sum, service) => sum + service.price, 0).toFixed(2);
 
-        if (confirm(confirmationMessage)) {
-            // Show payment modal
-            showPaymentModal(
-                'Garage Name Here', // Replace with dynamic garage name
-                data.date,
-                data.timeSlot,
-                data.services,
-                totalAmount
-            );
-        }
+    // Assuming the first selected service is the one to be checked for availability
+    const selectedServiceName = selectedServices.length > 0 ? selectedServices[0].name : '';
 
-        closeModal();
-    }
-    document.getElementById('bookButton').onclick = submitServiceTimeSlot;
-    
-        document.getElementById('bookButton').onclick = submitServiceTimeSlot;
-    
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+    const data = {
+        garage_id: formData.get('garage_id'),
+        date: formData.get('date'),
+        timeSlot: formData.get('timeSlot'),
+        selected_service_name: selectedServiceName,
+        services: selectedServices
+    };
+
+    console.log('Sending data:', data);
+
+    fetch('/check_availability/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Received response:', data);
+        if (data.status === 'available') {
+            const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${data.services.filter(service => selectedServices.some(s => s.name === service.name)).map(service => service.name).join(', ')}?`;
+            if (confirm(confirmationMessage)) {
+                showPaymentModal(data.garage_name, data.date, data.timeSlot, data.services, totalAmount);
             }
-            return cookieValue;
+        } else if (data.status === 'full') {
+            alert('The slot is full for the selected service.');
+        } else {
+            alert('An error occurred: ' + data.message);
         }
-    
-        function showPaymentModal(garageName, date, timeSlot, services, totalAmount) {
-        var modal = document.getElementById('paymentModal');
-        document.getElementById('modalGarageName').innerText = garageName;
-        document.getElementById('modalDate').innerText = date;
-        document.getElementById('modalTimeSlot').innerText = timeSlot;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+    });
 
-        var servicesList = document.getElementById('modalServicesList');
-        servicesList.innerHTML = ''; // Clear previous services
-        services.forEach(function(service) {
-            var listItem = document.createElement('li');
-            listItem.innerText = `${service.name} - Rs: ${service.price.toFixed(2)}`;
-            servicesList.appendChild(listItem);
-        });
+    closeModal(); // Ensure the modal is closed after submission
+}
 
-        document.getElementById('modalTotalAmount').innerText = `Rs: ${totalAmount}`;
-        modal.style.display = 'block';
-    }
+document.getElementById('bookButton').onclick = submitServiceTimeSlot;
 
-    function closeModal() {
-        var modal = document.getElementById('timeSlotModal');
-        modal.style.display = 'none';
-    }
-    
-        function closePaymentModal() {
-            var modal = document.getElementById('paymentModal');
-            modal.style.display = 'none';
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
-    
-        // Initialize calendar
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            generateCalendar(today.getFullYear(), today.getMonth());
-        });
+    }
+    return cookieValue;
+}
+function showPaymentModal(garageName, date, timeSlot, services, totalAmount) {
+    var modal = document.getElementById('paymentModal');
+    document.getElementById('modalGarageName').innerText = garageName;
+    document.getElementById('modalDate').innerText = date;
+    document.getElementById('modalTimeSlot').innerText = timeSlot;
+
+    var servicesList = document.getElementById('modalServicesList');
+    servicesList.innerHTML = ''; // Clear previous services
+    services.forEach(function(service) {
+        var listItem = document.createElement('li');
+        listItem.innerText = `${service.name} - Rs: ${service.price}`;
+        servicesList.appendChild(listItem);
+    });
+
+    document.getElementById('modalTotalAmount').innerText = `Rs: ${totalAmount}`;
+    modal.style.display = 'block';
+}
+
+function closePaymentModal() {
+    var modal = document.getElementById('paymentModal');
+    modal.style.display = 'none';
+}
+
+
+// Initialize calendar
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    generateCalendar(today.getFullYear(), today.getMonth());
+});
     </script>
   </body>
 </html>

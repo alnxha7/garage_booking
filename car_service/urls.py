@@ -43,6 +43,7 @@ urlpatterns = [
     path('delete_booking/<int:booking_id>/', views.delete_booking, name='delete_booking'),
 
     path('book-service', views.book_service, name='book_service'),
+    path('check_availability/', views.check_availability, name='check_availability'),
     
 ]
 
