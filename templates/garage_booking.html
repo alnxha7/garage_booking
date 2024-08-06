@@ -19,137 +19,146 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
       /* Modal Styles */
-.modal-content {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal-header {
-    border-bottom: none;
-    padding: 15px;
-    position: relative;
-}
-
-.modal-title {
-    font-weight: bold;
-    font-size: 1.25em;
-}
-
-.close {
-    opacity: 0.7;
-    font-size: 1.5em;
-}
-
-.close:hover {
-    color: #f96d00;
-    opacity: 1;
-}
-
-#garage-booking-link:hover {
-  background-color: lightgreen;
-  opacity: 1;
-}
-
-/* Fade In Animation */
-.modal.fade .modal-dialog {
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal.show .modal-dialog {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Modal Body */
-.modal-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
-/* Modal Footer */
-.modal-footer {
-    border-top: none;
-    padding: 15px;
-    background-color: #eee;
-}
-
-/* Button Styling */
-.modal-footer .btn-secondary {
-    background-color: #252525;
+      button[type="button"] {
+    background-color: #333;
     color: #fff;
     border: none;
-    border-radius: 5px;
     padding: 10px 20px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+
+    button[type="button"]:hover {
+      background-color: #555;
+    }
+
+    .calendar td:hover {
+      background-color: #fd7e14; /* Light grey background */
+      color: #000; /* Black text color */
+    }
+
+      @keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+    from {
+        transform: translateY(-50%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+        }
+    }
+      .calendar {
+          font-family: Arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+          margin: 20px auto;
+          font-size: 18px;
+      }
+      .calendar th, .calendar td {
+          border: 1px solid #dddddd;
+          text-align: center;
+          padding: 20px;
+          height: 40px;
+          cursor: pointer;
+      }
+      .calendar th {
+          background-color: #007bff;
+          color: #333;
+      }
+      .today {
+          background-color: #ffff99;
+          font-weight: bold;
+          border-radius: 50%;
+      }
+      .past-date {
+          color: #cccccc;
+          cursor: not-allowed;
+      }
+      .back-btn {
+          display: inline-block;
+          background: #333;
+          color: #fff;
+          padding: 10px 20px;
+          text-decoration: none;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          margin-top: 20px;
+          margin-left: 20px;
+      }
+      .back-btn:hover {
+          background-color: rgb(180, 180, 180);
+          color: #333;
+      }
+      .date-picker-container {
+          margin-top: 20px;
+          text-align: center;
+      }
+      .date-picker-container label, .date-picker-container input, .date-picker-container button {
+          font-size: 16px;
+          margin-right: 10px;
+      }
+      /* CSS for time slot modal */
+      .modal {
+          display: none;
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgb(0,0,0);
+          background-color: rgba(0,0,0,0.4);
+          padding-top: 60px;
+      }
+      .modal-content {
+          background-color: #fefefe;
+          margin: 5% auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%;
+      }
+      .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+      .time-slot-radio {
+          display: block;
+          margin: 10px 0;
+      }
+
+      @keyframes slideOut {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-50%);
+        opacity: 0;
+    }
 }
 
-.modal-footer .btn-secondary:hover {
-    background-color: #f96d00;
-    transform: scale(1.05);
+.modal.fade-out .modal-content {
+    animation: slideOut 0.3s ease-in;
 }
-        .auditorium-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 35px;
-            margin-bottom: 40px;
-        }
-        .auditorium-tile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 270px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin: 10px;
-            padding: 10px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: #ffc107;
-        }
-        .auditorium-tile:hover {
-            transform: scale(1.10);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        .auditorium-tile img {
-            width: 100%;
-            height: 60%;
-            border-bottom: 1px solid #ddd;
-            border-radius: 5px 5px 0 0;
-        }
-        .auditorium-tile h3 {
-            margin: 10px 0;
-            font-size: 1.2em;
-            color: #333;
-        }
-        .auditorium-tile p {
-            margin: 5px 0;
-            color: #555;
-        }
-        .auditorium-tile a, .auditorium-tile button {
-            margin-top: 10px;
-            background-color: #252525;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .auditorium-tile a:hover, .auditorium-tile button:hover {
-            background-color: #5a5a5a;
-            transform: scale(1.05);
-        }   
-        .auditorium-tile:hover {
-            background-color: #3aa9f8;
-        }
-        
     </style>
   </head>
   <body>
@@ -204,6 +213,70 @@
         </div>
     </nav>
     <!-- END nav -->
+
+    <section class="ftco-section">
+        <div class="container">
+            <h2>Garage Timing: 10:00 am - 6:00 pm</h2>
+            <div class="date-picker-container">
+                <label for="datePicker">Choose Your Date: </label>
+                <input type="date" id="datePicker">
+                <button onclick="jumpToDate()">Enter</button>
+                <button onclick="jumpToToday()">Today</button>
+            </div>
+
+            <table id="calendar" class="calendar">
+                <thead>
+                    <tr>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Calendar dates will be dynamically generated here -->
+                </tbody>
+            </table>
+
+            <!-- Time Slot Modal -->
+            <div id="timeSlotModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2>Select Service and Time Slot</h2>
+                    <form id="serviceTimeSlotForm">
+                        <input type="hidden" id="garage_id" name="garage_id" value="{{ garage.id }}">
+                        <input type="hidden" id="selectedDate" name="date">
+                        <label for="serviceSelect">Select Service:</label>
+                        <select id="serviceSelect" name="service">
+                            {% for service in services %}
+                                <option value="{{ service.id }}">{{ service.service_name }} - Rs: {{ service.price }}</option>
+                            {% endfor %}
+                        </select>
+                        <h3>Select Time Slot</h3>
+                        <label class="time-slot-radio">
+                            <input type="radio" name="timeSlot" value="10-12">
+                            10 AM - 12 PM
+                        </label>
+                        <label class="time-slot-radio">
+                            <input type="radio" name="timeSlot" value="12-2">
+                            12 PM - 2 PM
+                        </label>
+                        <label class="time-slot-radio">
+                            <input type="radio" name="timeSlot" value="2-4">
+                            2 PM - 4 PM
+                        </label>
+                        <label class="time-slot-radio">
+                            <input type="radio" name="timeSlot" value="4-6">
+                            4 PM - 6 PM
+                        </label>
+                        <button type="button" id="bookButton">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer class="footer ftco-section">
         <div class="container">
@@ -279,39 +352,144 @@
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'js/scrollax.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        var currentYear = new Date().getFullYear();
+    var currentMonth = new Date().getMonth();
+
+    function generateCalendar(year, month) {
+        var firstDay = new Date(year, month, 1).getDay();
+        var startDate = new Date(year, month, 1 - (firstDay === 0 ? 6 : firstDay - 1));
+        var endDate = new Date(year, month + 1, 0);
+        var calendarBody = document.querySelector('#calendar tbody');
+        calendarBody.innerHTML = '';
+
+        for (var i = 0; i < 6; i++) {
+            var row = document.createElement('tr');
+            for (var j = 0; j < 6; j++) {
+                var cell = document.createElement('td');
+                var cellDate = new Date(startDate);
+                cellDate.setDate(startDate.getDate() + j + i * 7);
+
+                if (cellDate.getMonth() !== month) {
+                    cell.appendChild(document.createTextNode(''));
+                } else {
+                    var cellText = document.createTextNode(cellDate.getDate());
+                    cell.appendChild(cellText);
+
+                    var dateString = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(cellDate.getDate()).padStart(2, '0');
+                    if (cellDate < new Date()) {
+                        cell.classList.add('past-date');
+                    } else {
+                        cell.onclick = (function(dateString) {
+                            return function() {
+                                showTimeSlotModal(dateString);
+                            }
+                        })(dateString);
+                    }
+                    if (new Date().toDateString() === cellDate.toDateString()) {
+                        cell.classList.add('today');
+                    }
+                }
+                row.appendChild(cell);
+            }
+            calendarBody.appendChild(row);
+        }
+    }
+
+        function jumpToDate() {
+            const dateInput = document.getElementById('datePicker').value;
+            if (dateInput) {
+                const [year, month, day] = dateInput.split('-').map(Number);
+                generateCalendar(year, month - 1); // month is zero-based
+            } else {
+                alert('Please select a date.');
+            }
+        }
+
+        function jumpToToday() {
+            const today = new Date();
+            generateCalendar(today.getFullYear(), today.getMonth());
+        }
+
+        function showTimeSlotModal(dateString) {
+            var modal = document.getElementById('timeSlotModal');
+            var form = document.getElementById('serviceTimeSlotForm');
+            form.querySelector('#selectedDate').value = dateString; // Set the date in the hidden input field
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('timeSlotModal');
+            modal.style.display = 'none';
+        }
+
+        function submitServiceTimeSlot() {
+    const form = document.getElementById('serviceTimeSlotForm');
+    const formData = new FormData(form);
+
+    const selectedOption = document.querySelector('#serviceSelect option:checked');
+    const selectedServiceName = selectedOption.textContent.split(' - ')[0]; // Extract service name
+    const selectedServiceId = formData.get('service'); // Service ID
+
+    const data = {
+        garage_id: formData.get('garage_id'),
+        date: formData.get('date'),
+        timeSlot: formData.get('timeSlot'),
+        service: selectedServiceId
+    };
+
+    const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} and ${selectedServiceName}?`;
+
+    if (confirm(confirmationMessage)) {
+        fetch('/book_service/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Booking successful!');
+                closeModal();
+            } else {
+                alert('Booking failed. Please try again.');
+            }
+        })
+        .catch(error => {
+            alert('An error occurred. Please try again.');
+            console.error('Error:', error);
+        });
+    }
+    closeModal();
+}
+
+        document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+
+        // Function to get CSRF token for AJAX requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Initialize calendar
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            generateCalendar(today.getFullYear(), today.getMonth());
+        });
+    </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

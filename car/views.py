@@ -270,10 +270,54 @@ def delete_booking(request, booking_id):
     booking.delete()
     return redirect('reserved_bookings', garage_id=garage_id)
 
+@login_required
 def garage_booking(request, garage_id):
     garage = get_object_or_404(Garage, id=garage_id)
+    services = GarageService.objects.filter(garage_id=garage_id)
+    
     context = {
         'garage': garage,
         'garage_id': garage_id,
+        'services': services,
     }
     return render(request, 'garage_booking.html', context)
+
+@csrf_exempt
+def book_service(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            garage_id = data.get('garage_id')
+            date = data.get('date')
+            slot = data.get('timeSlot')
+            service_name = data.get('service')
+
+            if not all([garage_id, date, slot, service_name]):
+                return JsonResponse({'status': 'error', 'message': 'Missing required fields'})
+
+            service = GarageService.objects.get(service_name=service_name)
+            existing_bookings = Booking.objects.filter(
+                garage_id=garage_id,
+                date=date,
+                slot=slot,
+                service=service
+            ).count()
+
+            if existing_bookings >= service.max_per_slot:
+                return JsonResponse({'status': 'error', 'message': 'This slot is fully booked'})
+
+            Booking.objects.create(
+                garage_id=garage_id,
+                date=date,
+                slot=slot,
+                service=service
+            )
+            return JsonResponse({'status': 'success'})
+
+        except GarageService.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Service not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
