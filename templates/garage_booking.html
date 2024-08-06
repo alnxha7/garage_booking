@@ -18,7 +18,25 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-      /* Modal Styles */
+     .service-checkbox-container {
+    display: flex;
+    flex-direction: column; /* Arrange items vertically */
+    margin: 10px 0; /* Space around the container */
+}
+
+/* Style for each checkbox item */
+.service-checkbox {
+    display: flex;
+    align-items: center; /* Align checkbox and text vertically */
+    margin-bottom: 10px; /* Space between each checkbox */
+    font-size: 16px; /* Adjust font size */
+}
+
+/* Style for the checkbox itself */
+.service-checkbox input[type="checkbox"] {
+    margin-right: 10px; /* Space between checkbox and label text */
+    transform: scale(1.2); /* Increase checkbox size */
+}
       button[type="button"] {
     background-color: #333;
     color: #fff;
@@ -249,11 +267,12 @@
                         <input type="hidden" id="garage_id" name="garage_id" value="{{ garage.id }}">
                         <input type="hidden" id="selectedDate" name="date">
                         <label for="serviceSelect">Select Service:</label>
-                        <select id="serviceSelect" name="service">
-                            {% for service in services %}
-                                <option value="{{ service.id }}">{{ service.service_name }} - Rs: {{ service.price }}</option>
-                            {% endfor %}
-                        </select>
+                        {% for service in services %}
+        <label class="service-checkbox">
+            <input type="checkbox" name="services" value="{{ service.id }}">
+            {{ service.service_name }} - Rs: {{ service.price }}
+        </label>
+    {% endfor %}
                         <h3>Select Time Slot</h3>
                         <label class="time-slot-radio">
                             <input type="radio" name="timeSlot" value="10-12">
@@ -427,18 +446,17 @@
     const form = document.getElementById('serviceTimeSlotForm');
     const formData = new FormData(form);
 
-    const selectedOption = document.querySelector('#serviceSelect option:checked');
-    const selectedServiceName = selectedOption.textContent.split(' - ')[0]; // Extract service name
-    const selectedServiceId = formData.get('service'); // Service ID
+    const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => checkbox.value);
+    const selectedServiceNames = Array.from(document.querySelectorAll('input[name="services"]:checked')).map(checkbox => checkbox.nextSibling.textContent.trim());
 
     const data = {
         garage_id: formData.get('garage_id'),
         date: formData.get('date'),
         timeSlot: formData.get('timeSlot'),
-        service: selectedServiceId
+        services: selectedServices
     };
 
-    const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} and ${selectedServiceName}?`;
+    const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${selectedServiceNames.join(', ')}?`;
 
     if (confirm(confirmationMessage)) {
         fetch('/book_service/', {
@@ -466,23 +484,25 @@
     closeModal();
 }
 
+document.getElementById('bookButton').onclick = submitServiceTimeSlot;
+
         document.getElementById('bookButton').onclick = submitServiceTimeSlot;
 
         // Function to get CSRF token for AJAX requests
         function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
-            return cookieValue;
         }
+    }
+    return cookieValue;
+}
 
         // Initialize calendar
         document.addEventListener('DOMContentLoaded', function() {
