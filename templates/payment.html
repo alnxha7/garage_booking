@@ -101,15 +101,24 @@
 <body>
     <div class="container">
         <h1>Payment Details</h1>
-        <form id="paymentForm" onsubmit="return validatePaymentForm()">
+        <form action="{% url 'confirm_payment' %}" method="post" id="paymentForm" onsubmit="return validatePaymentForm()">
+            {% csrf_token %}
+    <!-- Hidden fields to pass booking details -->
+            <input type="hidden" name="garage_name" value="{{ garage_name }}">
+            <input type="hidden" name="user_name" value="{{ user_name }}">
+            <input type="hidden" name="date_booked" value="{{ date_booked }}">
+            <input type="hidden" name="slot_booked" value="{{ slot_booked }}">
+            <input type="hidden" name="service_selected" value="{{ service_selected }}">
+            <input type="hidden" name="total_amount" value="{{ total_amount }}">
+            
             <label for="cardName">Name:</label>
             <input type="text" id="cardName" name="cardName" required>
 
             <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" title="Card number must be exactly 16 digits">
+            <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" maxlength="16" title="Card number must be exactly 16 digits">
 
             <label for="cardCVV">CVV:</label>
-            <input type="text" id="cardCVV" name="cardCVV" required pattern="\d{3}" title="CVV must be exactly 3 digits">
+            <input type="text" id="cardCVV" name="cardCVV" required pattern="\d{3}" maxlength="3" title="CVV must be exactly 3 digits">
 
             <button type="submit">Submit Payment</button>
         </form>
@@ -132,9 +141,15 @@
                 alert('CVV must be exactly 3 digits.');
                 return false; // Prevent form submission
             }
-            window.location.href = "{% url 'success_page' %}";
-        return false; // Prevent default form submission
-    }
+
+            return true; // Allow form submission
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            if (!validatePaymentForm()) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
     </script>
 </body>
 </html>

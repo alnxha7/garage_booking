@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -61,3 +62,24 @@ class Booking(models.Model):
     date = models.DateField()
     slot = models.CharField(max_length=30)
     service = models.ForeignKey(GarageService, on_delete=models.CASCADE)
+
+class BookingHistory(models.Model):
+    garage_name = models.CharField(max_length=255)
+    user_name = models.CharField(max_length=255)
+    date_booked = models.DateField()
+    slot_booked = models.CharField(max_length=30)
+    date_of_booking = models.DateTimeField(default=timezone.now)
+    service_selected = models.CharField(max_length=255)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    card_number = models.CharField(max_length=16)
+    cvv = models.CharField(max_length=3)
+    admin_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # Calculate the admin amount as 15% of the total amount
+        if self.total_amount:
+            self.admin_amount = self.total_amount * 0.15
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'BookingHistory for {self.user_name} at {self.garage_name}'

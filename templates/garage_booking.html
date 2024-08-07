@@ -602,7 +602,7 @@ function submitServiceTimeSlot() {
         if (data.status === 'available') {
             const confirmationMessage = `Do you want to book ${data.date} for ${data.timeSlot} with the following services: ${data.services.filter(service => selectedServices.some(s => s.name === service.name)).map(service => service.name).join(', ')}?`;
             if (confirm(confirmationMessage)) {
-                showPaymentModal(data.garage_name, data.date, data.timeSlot, data.services, totalAmount);
+                showPaymentModal(data.garage_name, data.date, data.timeSlot, selectedServices, totalAmount);
             }
         } else if (data.status === 'full') {
             alert('The slot is full for the selected service.');
@@ -634,7 +634,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-function showPaymentModal(garageName, date, timeSlot, services, totalAmount) {
+function showPaymentModal(garageName, date, timeSlot, selectedServices, totalAmount) {
     var modal = document.getElementById('paymentModal');
     document.getElementById('modalGarageName').innerText = garageName;
     document.getElementById('modalDate').innerText = date;
@@ -642,7 +642,7 @@ function showPaymentModal(garageName, date, timeSlot, services, totalAmount) {
 
     var servicesList = document.getElementById('modalServicesList');
     servicesList.innerHTML = ''; // Clear previous services
-    services.forEach(function(service) {
+    selectedServices.forEach(function(service) {
         var listItem = document.createElement('li');
         listItem.innerText = `${service.name} - Rs: ${service.price}`;
         servicesList.appendChild(listItem);

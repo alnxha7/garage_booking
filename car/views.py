@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService, Booking
+from .models import User, Garage, GarageService, Booking, BookingHistory
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from django.utils import timezone
 import json
 import logging
 
@@ -373,6 +375,49 @@ def check_availability(request):
 
 def payment(request):
     return render(request, 'payment.html')
+
+def confirm_payment(request):
+    if request.method == 'POST':
+        garage_name = request.POST.get('garage_name')
+        user_name = request.POST.get('user_name')
+        date_booked = request.POST.get('date_booked')
+        slot_booked = request.POST.get('slot_booked')
+        service_selected = request.POST.get('service_selected')
+        total_amount_str = request.POST.get('total_amount')
+
+        if not total_amount_str:
+            return HttpResponse("Total amount is missing", status=400)
+
+        try:
+            total_amount = float(total_amount_str)
+        except ValueError:
+            return HttpResponse("Invalid total amount format", status=400)
+
+        card_number = request.POST.get('card_number')
+        cvv = request.POST.get('cvv')
+
+        # Calculate the admin amount (15% of the total amount)
+        admin_amount = total_amount * 0.15
+
+        # Create a booking history record
+        booking_history = BookingHistory(
+            garage_name=garage_name,
+            user_name=user_name,
+            date_booked=date_booked,
+            slot_booked=slot_booked,
+            date_of_booking=timezone.now(),
+            service_selected=service_selected,
+            total_amount=total_amount,
+            card_number=card_number,
+            cvv=cvv,
+            admin_amount=admin_amount
+        )
+        booking_history.save()
+
+        return redirect('success_page')  # Redirect to a success page
+
+    else:
+        return HttpResponse("Invalid request method", status=405)
 
 def success_page(request):
     return render(request, 'success.html')
