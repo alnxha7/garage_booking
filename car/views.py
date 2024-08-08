@@ -386,13 +386,41 @@ def confirm_payment(request):
             data = json.loads(request.body)
             logger.debug(f"Received data: {data}")
 
-            # Use the logged-in user
             user = request.user
             total_amount = Decimal(data.get('totalAmount'))  # Convert to Decimal
+            garage_name = data.get('garageName')
 
-            booking = BookingHistory(
-                garage_name=data.get('garageName'),
-                user_name=user.username,  # Use the logged-in user's username
+            try:
+                garage_user = User.objects.get(username=garage_name)  # Assuming the name is stored in the User model
+                garage = Garage.objects.get(user=garage_user)
+                garage_id = garage.id
+            except User.DoesNotExist:
+                logger.error(f"User with username '{garage_name}' does not exist.")
+                return JsonResponse({'success': False, 'error': f"User with username '{garage_name}' does not exist."})
+            except Garage.DoesNotExist:
+                logger.error(f"Garage for user '{garage_name}' does not exist.")
+                return JsonResponse({'success': False, 'error': f"Garage for user '{garage_name}' does not exist."})
+
+            # Fetch and process services
+            service_names = data.get('services', [])
+            services = GarageService.objects.filter(service_name__in=service_names)
+
+            if not services.exists():
+                logger.error(f"No matching services found for: {service_names}")
+                return JsonResponse({'success': False, 'error': 'No matching services found.'})
+
+            # Create a booking instance for each service
+            for service in services:
+                Booking.objects.create(
+                    garage_id=garage_id, 
+                    date=data.get('date'),
+                    slot=data.get('timeSlot'),
+                    service=service
+                )
+                
+            bookinghistory = BookingHistory(
+                garage_name=garage_name,
+                user_name=user.username,
                 date_booked=data.get('date'),
                 slot_booked=data.get('timeSlot'),
                 total_amount=total_amount,
@@ -400,8 +428,8 @@ def confirm_payment(request):
                 card_number=data.get('cardNumber'),
                 cvv=data.get('cardCVV')
             )
-            booking.save()
-            logger.debug(f"Booking saved: {booking}")
+            bookinghistory.save()
+            logger.debug(f"Booking saved: {bookinghistory}")
 
             return JsonResponse({'success': True})
 
