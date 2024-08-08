@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Garage
 from django.db import IntegrityError
+from .models import BookingHistory
 
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
@@ -71,7 +72,34 @@ class GarageAdmin(admin.ModelAdmin):
         if 'delete_selected' in actions:
             del actions['delete_selected']
         return actions
+    
+class BookingHistoryAdmin(admin.ModelAdmin):
 
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        # Remove the 'delete_selected' action
+        if 'Delete selected booking historys' in actions:
+            del actions['Delete selected booking historys']
+        return actions
 
+    list_display = (
+        'garage_name', 'user_name', 'date_booked', 'slot_booked',
+        'date_of_booking', 'service_selected', 'total_amount', 'admin_amount'
+    )
+    list_filter = ('date_booked', 'garage_name', 'user_name')
+    search_fields = ('garage_name', 'user_name', 'service_selected')
+
+    # Optionally, you can also add fieldsets for more organized layout
+    fieldsets = (
+        (None, {
+            'fields': ('garage_name', 'user_name', 'date_booked', 'slot_booked', 'date_of_booking')
+        }),
+        ('Payment Details', {
+            'fields': ('service_selected', 'total_amount', 'card_number', 'cvv', 'admin_amount')
+        }),
+    )
+
+    
 admin.site.register(User, UserAdmin)
 admin.site.register(Garage, GarageAdmin)
+admin.site.register(BookingHistory, BookingHistoryAdmin)

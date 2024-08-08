@@ -9,7 +9,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f0f2f5;
             margin: 0;
             padding: 0;
             display: flex;
@@ -29,21 +29,22 @@
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            max-width: 90%;
-            animation: slideUp 0.5s ease-out;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            animation: slideIn 0.5s ease-out;
+            box-sizing: border-box;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
         h1 {
             margin-bottom: 20px;
             color: #333;
-            font-size: 24px;
+            font-size: 26px;
             text-align: center;
             animation: bounceIn 1s ease-out;
         }
@@ -56,35 +57,36 @@
 
         label {
             display: block;
-            margin: 10px 0 5px;
+            margin: 12px 0 6px;
             color: #555;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         input {
             width: 100%;
             padding: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         input:focus {
             border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
             outline: none;
         }
 
         button {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
@@ -95,6 +97,26 @@
 
         button:active {
             transform: scale(1);
+        }
+
+        p {
+            margin: 10px 0;
+            color: #666;
+            font-size: 16px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #f8f9fa;
+            padding: 8px;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            color: #333;
         }
     </style>
 </head>

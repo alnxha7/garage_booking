@@ -17,139 +17,46 @@
     <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
-      /* Modal Styles */
-.modal-content {
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal-header {
-    border-bottom: none;
-    padding: 15px;
-    position: relative;
-}
-
-.modal-title {
-    font-weight: bold;
-    font-size: 1.25em;
-}
-
-.close {
-    opacity: 0.7;
-    font-size: 1.5em;
-}
-
-.close:hover {
-    color: #f96d00;
-    opacity: 1;
-}
-
-#garage-booking-link:hover {
-  background-color: lightgreen;
-  opacity: 1;
-}
-
-/* Fade In Animation */
-.modal.fade .modal-dialog {
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal.show .modal-dialog {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Modal Body */
-.modal-body {
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
-/* Modal Footer */
-.modal-footer {
-    border-top: none;
-    padding: 15px;
-    background-color: #eee;
-}
-
-/* Button Styling */
-.modal-footer .btn-secondary {
-    background-color: #252525;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.modal-footer .btn-secondary:hover {
-    background-color: #f96d00;
-    transform: scale(1.05);
-}
-        .auditorium-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 35px;
-            margin-bottom: 40px;
+        /* Style the table */
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-size: 16px;
+          color: #333;
         }
-        .auditorium-tile {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 270px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin: 10px;
-            padding: 10px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background-color: #ffc107;
+      
+        /* Table header styling */
+        thead th {
+          background-color: #f8f9fa;
+          color: #333;
+          padding: 10px;
+          text-align: left;
+          border-bottom: 2px solid #ddd;
         }
-        .auditorium-tile:hover {
-            transform: scale(1.10);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      
+        /* Table row and cell styling */
+        tbody tr:nth-child(even) {
+          background-color: #f2f2f2;
         }
-        .auditorium-tile img {
-            width: 100%;
-            height: 60%;
-            border-bottom: 1px solid #ddd;
-            border-radius: 5px 5px 0 0;
+      
+        tbody tr:hover {
+          background-color: #e9ecef;
         }
-        .auditorium-tile h3 {
-            margin: 10px 0;
-            font-size: 1.2em;
-            color: #333;
+      
+        td, th {
+          padding: 12px;
+          border: 1px solid #ddd;
+          text-align: left;
         }
-        .auditorium-tile p {
-            margin: 5px 0;
-            color: #555;
+      
+        /* Style for empty message */
+        .empty-message {
+          text-align: center;
+          color: #888;
+          font-style: italic;
         }
-        .auditorium-tile a, .auditorium-tile button {
-            margin-top: 10px;
-            background-color: #252525;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .auditorium-tile a:hover, .auditorium-tile button:hover {
-            background-color: #5a5a5a;
-            transform: scale(1.05);
-        }   
-        .auditorium-tile:hover {
-            background-color: #3aa9f8;
-        }
-        
-    </style>
+      </style>
   </head>
   <body>
     <div class="wrap">
@@ -195,8 +102,8 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item"><a href="{% url 'user_index' %}" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link">Service Centers</a></li>
-                    <li class="nav-item active"><a href="{% url 'booking_history' %}" class="nav-link">Booking History</a></li>
+                    <li class="nav-item active"><a href="#" class="nav-link">Service Centers</a></li>
+                    <li class="nav-item"><a href="{% url 'booking_history' %}" class="nav-link">Booking History</a></li>
                     <li class="nav-item"><a href="/" class="nav-link">Logout</a></li>
                 </ul>
             </div>
@@ -204,45 +111,53 @@
     </nav>
     <!-- END nav -->
 
-    <div class="auditorium-container">
-        {% if garages %}
-            {% for garage in garages %}
-            <div class="auditorium-tile">
-                {% if garage.images %}
-                    <img src="{{ garage.images.url }}" alt="Image of {{ garage.user.username }}">
-                {% else %}
-                    <img src="{% static 'images/car_garage_1.jpg' %}" alt="Default Image">
-                {% endif %}
-                <h3>{{ garage.user.username }}</h3>
-                <p>{{ garage.location }}</p>
-                <a href="#" class="view-details" data-id="{{ garage.id }}" data-toggle="modal" data-target="#garageDetailsModal">View details</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No garages available.</p>
-        {% endif %}
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="garageDetailsModal" tabindex="-1" role="dialog" aria-labelledby="garageDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="garageDetailsModalLabel">Garage Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Garage details will be dynamically loaded here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="garage-booking-link" class="btn btn-secondary" data-dismiss="modal">Book</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
+    <section class="ftco-section">
+        <div class="container">
+            <h1>Booking History</h1>
+            <table border="1">
+                <thead>
+                    <tr>
+                        {% if viewing_as == 'garage' %}
+                            <th>User Name</th>
+                        {% else %}
+                            <th>Garage Name</th>
+                        {% endif %}
+                        <th>Booking Date</th>
+                        <th>Slot Booked</th>
+                        <th>Date of Booking</th>
+                        <th>Service Selected</th>
+                        <th>Total Amount</th>
+                        {% if viewing_as == 'garage' %}
+                            <th>Admin Amount</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in booking_history %}
+                    <tr>
+                        {% if viewing_as == 'garage' %}
+                            <td>{{ booking.user_name }}</td>
+                        {% else %}
+                            <td>{{ booking.garage_name }}</td>
+                        {% endif %}
+                        <td>{{ booking.date_booked }}</td>
+                        <td>{{ booking.slot_booked }}</td>
+                        <td>{{ booking.date_of_booking }}</td>
+                        <td>{{ booking.service_selected }}</td>
+                        <td>{{ booking.total_amount }}</td>
+                        {% if viewing_as == 'garage' %}
+                            <td>{{ booking.admin_amount }}</td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">No bookings found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
+    </section>
 
     <footer class="footer ftco-section">
         <div class="container">
@@ -318,48 +233,5 @@
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'js/scrollax.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
-    <script>
-        $(document).ready(function() {
-    $('#garageDetailsModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var garageId = button.data('id'); // Extract info from data-* attributes
-
-        // Fetch garage details using AJAX
-        $.ajax({
-            url: "{% url 'garage_details' %}", // Ensure this URL is correctly resolved in Django
-            type: 'GET',
-            data: { id: garageId },
-            success: function(response) {
-                var servicesHtml = response.services.map(function(service) {
-                    return '<li><h6>' + service.service_name + ' - Rs: ' + service.price + '</h6></li>';
-                }).join('');
-
-                $('.modal-body').html(
-                    '<h4>Location: ' + response.location + '</h4>' +
-                    '<h4>Phone: ' + response.phone + '</h4>' +
-                    '<h6>Services:</h6>' +
-                    '<ul>' + servicesHtml + '</ul>'
-                );
-
-                // Store the garage ID in the Book button's data attribute
-                $('#garage-booking-link').data('garage-id', garageId);
-            },
-            error: function() {
-                $('.modal-body').html('<p>Error loading details.</p>');
-            }
-        });
-    });
-
-    // Handle Book button click event
-    $('#garage-booking-link').on('click', function() {
-        var garageId = $(this).data('garage-id'); // Retrieve the stored garage ID
-        if (garageId) {
-            var bookingUrl = "{% url 'garage_booking' 0 %}".replace('0', garageId);
-            window.location.href = bookingUrl; // Redirect to booking URL
-            console.log('Booking URL:', bookingUrl); // Check the URL in the console
-        }
-    });
-});
-    </script>
   </body>
 </html>

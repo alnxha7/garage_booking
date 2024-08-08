@@ -6,9 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
-from django.utils import timezone
-from datetime import datetime
+from django.http import HttpResponseForbidden
 import json
 import logging
 from decimal import Decimal
@@ -417,7 +415,7 @@ def confirm_payment(request):
                     slot=data.get('timeSlot'),
                     service=service
                 )
-                
+
             bookinghistory = BookingHistory(
                 garage_name=garage_name,
                 user_name=user.username,
@@ -441,3 +439,32 @@ def confirm_payment(request):
 
 def success(request):
     return render(request, 'success.html')
+
+@login_required
+def booking_history(request):
+    user = request.user
+
+    if user.role == 'garage':
+        try:
+            # Fetch the garage associated with the logged-in user
+            garage = Garage.objects.get(user=user)
+            garage_name = garage.user.username  # Assuming `location` represents the garage name
+            # Fetch booking history for the garage
+            booking_history = BookingHistory.objects.filter(garage_name=garage_name)
+            context = {
+                'booking_history': booking_history,
+                'viewing_as': 'garage'
+            }
+        except Garage.DoesNotExist:
+            return HttpResponseForbidden("No associated garage found.")
+    elif user.role == 'user':
+        # Fetch booking history for the logged-in user
+        booking_history = BookingHistory.objects.filter(user_name=user.username)
+        context = {
+            'booking_history': booking_history,
+            'viewing_as': 'user'
+        }
+    else:
+        return HttpResponseForbidden("Access denied.")
+
+    return render(request, 'booking_history.html', context)
