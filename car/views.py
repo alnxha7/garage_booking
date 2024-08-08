@@ -8,8 +8,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.utils import timezone
+from datetime import datetime
 import json
 import logging
+from decimal import Decimal
 
 logger = logging.getLogger(__name__)
 
@@ -376,48 +378,38 @@ def check_availability(request):
 def payment(request):
     return render(request, 'payment.html')
 
+@csrf_exempt
+@login_required
 def confirm_payment(request):
     if request.method == 'POST':
-        garage_name = request.POST.get('garage_name')
-        user_name = request.POST.get('user_name')
-        date_booked = request.POST.get('date_booked')
-        slot_booked = request.POST.get('slot_booked')
-        service_selected = request.POST.get('service_selected')
-        total_amount_str = request.POST.get('total_amount')
-
-        if not total_amount_str:
-            return HttpResponse("Total amount is missing", status=400)
-
         try:
-            total_amount = float(total_amount_str)
-        except ValueError:
-            return HttpResponse("Invalid total amount format", status=400)
+            data = json.loads(request.body)
+            logger.debug(f"Received data: {data}")
 
-        card_number = request.POST.get('card_number')
-        cvv = request.POST.get('cvv')
+            # Use the logged-in user
+            user = request.user
+            total_amount = Decimal(data.get('totalAmount'))  # Convert to Decimal
 
-        # Calculate the admin amount (15% of the total amount)
-        admin_amount = total_amount * 0.15
+            booking = BookingHistory(
+                garage_name=data.get('garageName'),
+                user_name=user.username,  # Use the logged-in user's username
+                date_booked=data.get('date'),
+                slot_booked=data.get('timeSlot'),
+                total_amount=total_amount,
+                service_selected=json.dumps(data.get('services')),
+                card_number=data.get('cardNumber'),
+                cvv=data.get('cardCVV')
+            )
+            booking.save()
+            logger.debug(f"Booking saved: {booking}")
 
-        # Create a booking history record
-        booking_history = BookingHistory(
-            garage_name=garage_name,
-            user_name=user_name,
-            date_booked=date_booked,
-            slot_booked=slot_booked,
-            date_of_booking=timezone.now(),
-            service_selected=service_selected,
-            total_amount=total_amount,
-            card_number=card_number,
-            cvv=cvv,
-            admin_amount=admin_amount
-        )
-        booking_history.save()
+            return JsonResponse({'success': True})
 
-        return redirect('success_page')  # Redirect to a success page
+        except Exception as e:
+            logger.error(f"Error: {e}")
+            return JsonResponse({'success': False, 'error': str(e)})
 
-    else:
-        return HttpResponse("Invalid request method", status=405)
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-def success_page(request):
+def success(request):
     return render(request, 'success.html')

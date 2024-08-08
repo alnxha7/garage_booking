@@ -100,56 +100,147 @@
 </head>
 <body>
     <div class="container">
-        <h1>Payment Details</h1>
-        <form action="{% url 'confirm_payment' %}" method="post" id="paymentForm" onsubmit="return validatePaymentForm()">
-            {% csrf_token %}
-    <!-- Hidden fields to pass booking details -->
-            <input type="hidden" name="garage_name" value="{{ garage_name }}">
-            <input type="hidden" name="user_name" value="{{ user_name }}">
-            <input type="hidden" name="date_booked" value="{{ date_booked }}">
-            <input type="hidden" name="slot_booked" value="{{ slot_booked }}">
-            <input type="hidden" name="service_selected" value="{{ service_selected }}">
-            <input type="hidden" name="total_amount" value="{{ total_amount }}">
+        <div class="container">
+            <h1>Payment Details</h1>
+            <form id="paymentForm" method="post">
+                {% csrf_token %}
+                
+                <label for="cardName">Name:</label>
+                <input type="text" id="cardName" name="cardName" required>
             
-            <label for="cardName">Name:</label>
-            <input type="text" id="cardName" name="cardName" required>
-
-            <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" maxlength="16" title="Card number must be exactly 16 digits">
-
-            <label for="cardCVV">CVV:</label>
-            <input type="text" id="cardCVV" name="cardCVV" required pattern="\d{3}" maxlength="3" title="CVV must be exactly 3 digits">
-
-            <button type="submit">Submit Payment</button>
-        </form>
-    </div>
-    <script>
-        function validatePaymentForm() {
-            const cardNumber = document.getElementById('cardNumber').value;
-            const cardCVV = document.getElementById('cardCVV').value;
-            const name = document.getElementById('cardName').value;
-
-            const cardNumberPattern = /^\d{16}$/;
-            const cardCVVPattern = /^\d{3}$/;
-
-            if (!cardNumberPattern.test(cardNumber)) {
-                alert('Card number must be exactly 16 digits.');
-                return false; // Prevent form submission
+                <label for="cardNumber">Card Number:</label>
+                <input type="text" id="cardNumber" name="cardNumber" required pattern="\d{16}" maxlength="16" title="Card number must be exactly 16 digits">
+            
+                <label for="cardCVV">CVV:</label>
+                <input type="text" id="cardCVV" name="cardCVV" required pattern="\d{3}" maxlength="3" title="CVV must be exactly 3 digits">
+            
+                <p><strong>Garage:</strong> <span id="paymentGarageName"></span></p>
+                <p><strong>Date:</strong> <span id="paymentDate"></span></p>
+                <p><strong>Time Slot:</strong> <span id="paymentTimeSlot"></span></p>
+                <p><strong>Total Amount:</strong> <span id="paymentTotalAmount"></span></p>
+                <p><strong>Services:</strong></p>
+                <ul id="paymentServicesList"></ul>
+                
+                <button type="submit">Submit Payment</button>
+            </form>
+        </div>
+        <script>
+            function getQueryParams() {
+                const queryParams = new URLSearchParams(window.location.search);
+                return {
+                    garageName: queryParams.get('garageName'),
+                    date: queryParams.get('date'),
+                    timeSlot: queryParams.get('timeSlot'),
+                    totalAmount: queryParams.get('totalAmount'),
+                    services: JSON.parse(decodeURIComponent(queryParams.get('services'))) || []
+                };
             }
-
-            if (!cardCVVPattern.test(cardCVV)) {
-                alert('CVV must be exactly 3 digits.');
-                return false; // Prevent form submission
+    
+            function populatePaymentDetails() {
+                const params = getQueryParams();
+    
+                document.getElementById('paymentGarageName').innerText = params.garageName;
+                document.getElementById('paymentDate').innerText = params.date;
+                document.getElementById('paymentTimeSlot').innerText = params.timeSlot;
+                document.getElementById('paymentTotalAmount').innerText = `Rs: ${params.totalAmount}`;
+    
+                const servicesList = document.getElementById('paymentServicesList');
+                servicesList.innerHTML = '';
+                params.services.forEach(service => {
+                    const listItem = document.createElement('li');
+                    listItem.innerText = `${service.name}`;
+                    servicesList.appendChild(listItem);
+                });
             }
+    
+            document.addEventListener('DOMContentLoaded', populatePaymentDetails);
+    
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+    
+            function validatePaymentForm() {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const cardCVV = document.getElementById('cardCVV').value;
+                const name = document.getElementById('cardName').value;
+                const dateBooked = document.querySelector('input[name="date_booked"]').value;
+    
+                const cardNumberPattern = /^\d{16}$/;
+                const cardCVVPattern = /^\d{3}$/;
+                const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    
+                if (!cardNumberPattern.test(cardNumber)) {
+                    alert('Card number must be exactly 16 digits.');
+                    return false; // Prevent form submission
+                }
+    
+                if (!cardCVVPattern.test(cardCVV)) {
+                    alert('CVV must be exactly 3 digits.');
+                    return false; // Prevent form submission
+                }
+    
+                if (!datePattern.test(dateBooked)) {
+                    alert('Date must be in YYYY-MM-DD format.');
+                    return false; // Prevent form submission
+                }
+    
+                return true; // Allow form submission
+            }
+    
+           
 
-            return true; // Allow form submission
+            document.getElementById('paymentForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const form = event.target;
+    const formData = new FormData(form);
+
+    // Gather form data
+    const bookingData = {
+        garageName: document.getElementById('paymentGarageName').innerText,
+        userName: formData.get('cardName'),
+        date: document.getElementById('paymentDate').innerText,
+        timeSlot: document.getElementById('paymentTimeSlot').innerText,
+        totalAmount: parseFloat(document.getElementById('paymentTotalAmount').innerText.replace('Rs: ', '')),
+        services: Array.from(document.getElementById('paymentServicesList').children).map(li => li.innerText),
+        cardNumber: formData.get('cardNumber'),
+        cardCVV: formData.get('cardCVV')
+    };
+
+    // Send the data to the server
+    fetch('/confirm_payment/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(bookingData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Booking confirmed and saved successfully.');
+            window.location.href = '/success/';
+        } else {
+            alert('Failed to save booking: ' + (data.error || 'Unknown error'));
         }
-
-        document.getElementById('paymentForm').addEventListener('submit', function(event) {
-            if (!validatePaymentForm()) {
-                event.preventDefault(); // Prevent form submission if validation fails
-            }
-        });
-    </script>
-</body>
-</html>
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred.');
+    });
+});
+        </script>
+    </body>
+    </html>

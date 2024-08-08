@@ -407,7 +407,6 @@
                 </div>
             </div>
 
-
         </div>
     </section>
 
@@ -634,6 +633,18 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+function formatDate(date) {
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (datePattern.test(date)) {
+        return date; // Already in correct format
+    }
+
+    // Example of formatting a Date object to YYYY-MM-DD
+    const [year, month, day] = date.split('-');
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 function showPaymentModal(garageName, date, timeSlot, selectedServices, totalAmount) {
     var modal = document.getElementById('paymentModal');
     document.getElementById('modalGarageName').innerText = garageName;
@@ -650,6 +661,10 @@ function showPaymentModal(garageName, date, timeSlot, selectedServices, totalAmo
 
     document.getElementById('modalTotalAmount').innerText = `Rs: ${totalAmount}`;
     modal.style.display = 'block';
+
+    // Create a query string with booking details
+    var queryString = `garageName=${encodeURIComponent(garageName)}&date=${encodeURIComponent(date)}&timeSlot=${encodeURIComponent(timeSlot)}&totalAmount=${encodeURIComponent(totalAmount)}&services=${encodeURIComponent(JSON.stringify(selectedServices))}`;
+    document.getElementById('proceedPaymentButton').setAttribute('data-query', queryString);
 }
 
 function closePaymentModal() {
@@ -658,9 +673,9 @@ function closePaymentModal() {
 }
 
 document.getElementById('proceedPaymentButton').addEventListener('click', function() {
-    window.location.assign("{% url 'payment' %}");
+    var queryString = this.getAttribute('data-query');
+    window.location.href = `/payment/?${queryString}`;
 });
-
 
 // Initialize calendar
 document.addEventListener('DOMContentLoaded', function() {
@@ -670,4 +685,3 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
   </body>
 </html>
-

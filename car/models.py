@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 from django.utils import timezone
+from decimal import Decimal
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -78,7 +79,8 @@ class BookingHistory(models.Model):
     def save(self, *args, **kwargs):
         # Calculate the admin amount as 15% of the total amount
         if self.total_amount:
-            self.admin_amount = self.total_amount * 0.15
+            # Convert 0.15 to Decimal for the calculation
+            self.admin_amount = self.total_amount * Decimal('0.15')
         super().save(*args, **kwargs)
 
     def __str__(self):

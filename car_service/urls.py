@@ -46,7 +46,7 @@ urlpatterns = [
     path('check_availability/', views.check_availability, name='check_availability'),
     path('payment/', views.payment, name='payment'),
     path('confirm_payment/', views.confirm_payment, name='confirm_payment'),
-    path('success/', views.success_page, name='success_page'),
+    path('success/', views.success, name='success'),
     
 ]
 
