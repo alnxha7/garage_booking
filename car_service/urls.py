@@ -47,7 +47,11 @@ urlpatterns = [
     path('payment/', views.payment, name='payment'),
     path('confirm_payment/', views.confirm_payment, name='confirm_payment'),
     path('success/', views.success, name='success'),
+
     path('booking-history/', views.booking_history, name='booking_history'),
+    path('todays_bookings/', views.todays_bookings, name='todays_bookings'),
+    path('update_booking_status/', views.update_booking_status, name='update_booking_status'),
+    path('track/', views.track, name='track'),
     
 ]
 

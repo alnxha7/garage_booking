@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService, Booking, BookingHistory
+from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseForbidden
+from django.utils import timezone
 import json
 import logging
 from decimal import Decimal
@@ -468,3 +470,53 @@ def booking_history(request):
         return HttpResponseForbidden("Access denied.")
 
     return render(request, 'booking_history.html', context)
+
+@login_required
+def todays_bookings(request):
+    user = request.user
+    today = timezone.now().date()
+    try:
+        garage = Garage.objects.get(user=user)
+        garage_name = garage.user.username  # Assuming location represents the garage name
+        bookings = BookingHistory.objects.filter(garage_name=garage_name, date_booked=today)
+        # Get the current status for each booking
+        statuses = TodayBookingStatus.objects.filter(booking_id__in=bookings.values_list('id', flat=True))
+        status_dict = {status.booking_id: status.current_status for status in statuses}
+        
+        # Add current status to each booking
+        for booking in bookings:
+            booking.current_status = status_dict.get(booking.id, 'waiting')  # Default to 'waiting'
+        
+    except Garage.DoesNotExist:
+        bookings = []
+
+    return render(request, 'todays_bookings.html', {'bookings': bookings})
+
+@login_required
+@require_POST
+def update_booking_status(request):
+    booking_id = request.POST.get('booking_id')
+    status = request.POST.get('status')
+    
+    try:
+        today_status = TodayBookingStatus.objects.get(booking_id=booking_id)
+        today_status.current_status = status
+        today_status.save()
+        
+        # Return JSON response for AJAX
+        return JsonResponse({'success': True})
+
+    except TodayBookingStatus.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Status not found'})
+    
+@login_required
+def track(request):
+    user = request.user.username  # Assuming `user` is represented by their username
+    today = timezone.now().date()
+    try:
+        # Fetch bookings with their statuses for the current user and today's date
+        bookings = TodayBookingStatus.objects.filter(booking__user_name=user, booking__date_booked=today)
+    except TodayBookingStatus.DoesNotExist:
+        bookings = []
+
+    return render(request, 'track.html', {'bookings': bookings})

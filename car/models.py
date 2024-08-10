@@ -85,3 +85,11 @@ class BookingHistory(models.Model):
 
     def __str__(self):
         return f'BookingHistory for {self.user_name} at {self.garage_name}'
+    
+class TodayBookingStatus(models.Model):
+    booking = models.OneToOneField(BookingHistory, on_delete=models.CASCADE)
+    current_status = models.CharField(max_length=30, default='Pending')
+    date_booked = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        return f'{self.booking.user_name} - {self.current_status}'
