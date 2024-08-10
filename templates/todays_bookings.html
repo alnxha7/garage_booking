@@ -56,6 +56,27 @@
           color: #888;
           font-style: italic;
         }
+        select[name="status"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        color: #333;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s;
+    }
+
+    /* Style the select box on focus */
+    select[name="status"]:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    /* Style the option elements */
+    option {
+        padding: 10px;
+    }
       </style>
   </head>
   <body>
@@ -102,7 +123,7 @@
             <div class="collapse navbar-collapse" id="ftco-nav">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item"><a href="javascript:history.back()" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="{% url 'booking_history' %}" class="nav-link">Booking History</a></li>
+                    <li class="nav-item active"><a href="{% url 'todays_bookings' %}" class="nav-link">Todays Bookings</a></li>
                     <li class="nav-item"><a href="/" class="nav-link">Logout</a></li>
                 </ul>
             </div>
