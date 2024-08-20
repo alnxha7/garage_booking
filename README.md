@@ -1,8 +1,8 @@
-# Car Mechanic Shop HTML 5 Template
+# Garage Booking using Python Django
 
 ## Introduction
 
-This HTML 5 template is designed for car mechanic shops that want to create a professional-looking website. It is fully responsive and animated, which means it looks great on all devices. The template includes many features such as responsive navigation, introduction section with call us button, list of services with a counter, our services section with icons and brief info, testimonials section, contact section with call, WhatsApp and Google Maps embedded, and a working contact us form for static website that opens up the default email client and types the info automatically on submit button.
+This HTML 5 template is designed for car mechanic shops that want to create a professional-looking website. It is fully responsive and animated, which means it looks great on all devices. The template includes many features such as responsive navigation, introduction section with call us button, list of services with a counter, our services section with icons and brief info, testimonials section
 
 ## Features
 
@@ -39,8 +39,9 @@ The contact section includes call, WhatsApp and Google Maps embedded. This makes
 The working contact us form opens up the default email client and types the info automatically on submit button. This makes it easy for users to contact you without leaving your website.
 
 ## Getting Started
+
 ```bash
-git clone https://github.com/saaqi/car-mechanic-shop.git
+git clone https://github.com/alnxha7/garage_booking.git
 ```
 ## License
 
