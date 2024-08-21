@@ -126,6 +126,10 @@
                         <th>Date of Booking</th>
                         <th>Service Selected</th>
                         <th>Total Amount</th>
+                        {% if viewing_as == 'user' %}
+                            <th>Refund Amount</th>
+                            <th>Actions</th>
+                        {% endif %}
                         {% if viewing_as == 'garage' %}
                             <th>Admin Amount</th>
                         {% endif %}
@@ -144,6 +148,10 @@
                         <td>{{ booking.date_of_booking }}</td>
                         <td>{{ booking.service_selected }}</td>
                         <td>{{ booking.total_amount }}</td>
+                        {% if viewing_as == 'user' %}
+                        <td></td>
+                            <td><button class="btn-danger">Cancel</button></td>
+                        {% endif %}
                         {% if viewing_as == 'garage' %}
                             <td>{{ booking.admin_amount }}</td>
                         {% endif %}
