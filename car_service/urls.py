@@ -54,6 +54,8 @@ urlpatterns = [
     path('track/', views.track, name='track'),
 
     path('cancel-booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
+    path('save_vehicle_details/', views.save_vehicle_details, name='save_vehicle_details'),
+    path('check_vehicle_details/', views.check_vehicle_details, name='check_vehicle_details'),
     
 ]
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus
+from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus, Vehicle
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -12,7 +12,7 @@ from django.utils import timezone
 import json
 import logging
 from decimal import Decimal
-from datetime import date
+from datetime import date, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -419,7 +419,17 @@ def confirm_payment(request):
                     service=service
                 )
 
-            bookinghistory = BookingHistory(
+            booking_history = BookingHistory.objects.filter(
+                garage_name='dummy_garage',
+                user_name=user.username,
+                slot_booked='2-4',
+                service_selected='dummy_service',
+            )
+
+            if not booking_history.exists():
+                return JsonResponse({'success': False, 'error': 'No valid booking history found for the user'})
+
+            booking_history.update(
                 garage_name=garage_name,
                 user_name=user.username,
                 date_booked=data.get('date'),
@@ -429,8 +439,13 @@ def confirm_payment(request):
                 card_number=data.get('cardNumber'),
                 cvv=data.get('cardCVV')
             )
-            bookinghistory.save()
-            logger.debug(f"Booking saved: {bookinghistory}")
+
+            BookingHistory.objects.filter(
+                garage_name='dummy_garage',
+                user_name=user.username,
+                slot_booked='2-4',
+                service_selected='dummy_service',
+            ).delete()
 
             return JsonResponse({'success': True})
 
@@ -548,3 +563,65 @@ def cancel_booking(request, booking_id):
         return redirect('booking_history')
 
     return redirect('booking_history')
+
+
+@csrf_exempt
+@login_required  # Ensure the user is logged in
+def save_vehicle_details(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            number_plate = data.get('numberPlate')
+            model = data.get('model')
+            user = request.user
+
+
+            dummy_date = datetime.strptime('1970-12-12', '%Y-%m-%d').date()
+            dummy = BookingHistory(
+                garage_name='dummy_garage',
+                user_name=user.username,
+                date_booked=dummy_date,
+                date_of_booking=timezone.now(),
+                slot_booked='2-4',
+                total_amount=Decimal('100.00'),
+                service_selected='dummy_service',
+                card_number='1234567890123456',
+                cvv='123'
+            )
+            dummy.save()
+
+            # Fetch the exact dummy BookingHistory record created
+            booking_history = BookingHistory.objects.get(id=dummy.id)
+
+            if not booking_history:
+                dummy.delete()  # Clean up the dummy record if something went wrong
+                return JsonResponse({'success': False, 'error': 'No valid booking history found for the user'})
+
+            # Create the Vehicle instance linked to the correct BookingHistory record
+            vehicle = Vehicle.objects.create(
+                booking_history=booking_history,  # Link to the correct instance
+                number_plate=number_plate,
+                model=model
+            )
+            vehicle.save()
+            print(vehicle)
+  
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@csrf_exempt
+def check_vehicle_details(request):
+    if request.method == 'GET':
+        user = request.user
+        
+        # Retrieve the booking history for the current user
+        booking_history = BookingHistory.objects.filter(user_name=user.username).first()
+        
+        if booking_history:
+            # Check if a vehicle is associated with the found booking history
+            vehicle_exists = Vehicle.objects.filter(booking_history=booking_history).exists()
+            return JsonResponse({'vehicleDetailsExists': vehicle_exists})
+        else:
+            return JsonResponse({'vehicleDetailsExists': False})

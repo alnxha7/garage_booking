@@ -96,3 +96,8 @@ class TodayBookingStatus(models.Model):
 
     def __str__(self):
         return f'{self.booking.user_name} - {self.current_status}'
+    
+class Vehicle(models.Model):
+    booking_history = models.ForeignKey(BookingHistory, on_delete=models.CASCADE, related_name='vehicles')
+    number_plate = models.CharField(max_length=15, unique=True)
+    model = models.CharField(max_length=100)
