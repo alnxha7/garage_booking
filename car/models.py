@@ -75,6 +75,9 @@ class BookingHistory(models.Model):
     card_number = models.CharField(max_length=16)
     cvv = models.CharField(max_length=3)
     admin_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    is_canceled = models.BooleanField(default=False)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
+    garage_earnings = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, default=0)
 
     def save(self, *args, **kwargs):
         # Calculate the admin amount as 15% of the total amount

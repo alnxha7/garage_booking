@@ -132,6 +132,8 @@
                         {% endif %}
                         {% if viewing_as == 'garage' %}
                             <th>Admin Amount</th>
+                            <th>Status</th>
+                            <th>Garage Amount</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -149,11 +151,38 @@
                         <td>{{ booking.service_selected }}</td>
                         <td>{{ booking.total_amount }}</td>
                         {% if viewing_as == 'user' %}
-                        <td></td>
-                            <td><button class="btn-danger">Cancel</button></td>
+                            <td>{{ booking.final_price }}</td>
+                            <td>
+                                {% if booking.date_booked > today %}
+                                    {% if not booking.is_canceled %}
+                                        <form id="cancel-form-{{ booking.id }}" method="post" action="{% url 'cancel_booking' booking.id %}">
+                                            {% csrf_token %}
+                                            <button type="button" class="btn btn-danger" onclick="confirmCancel({{ booking.id }})">Cancel</button>
+                                        </form>
+                                    {% else %}
+                                        Canceled
+                                    {% endif %}
+                                {% else %}
+                                    Not available
+                                {% endif %}
+                            </td>
                         {% endif %}
                         {% if viewing_as == 'garage' %}
                             <td>{{ booking.admin_amount }}</td>
+                            <td>
+                                {% if booking.is_canceled %}
+                                    Canceled
+                                {% else %}
+                                    Active
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if booking.is_canceled %}
+                                    {{ booking.garage_earnings }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
                         {% endif %}
                     </tr>
                     {% empty %}
@@ -240,5 +269,13 @@
     <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
     <script src="{% static 'js/scrollax.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+    function confirmCancel(bookingId) {
+        if (confirm("Are you sure you want to cancel this booking? You will receive 80% of the total amount as a refund.")) {
+            // If the user clicks "OK", submit the cancellation form
+            document.getElementById('cancel-form-' + bookingId).submit();
+        }
+    }
+</script>
   </body>
 </html>

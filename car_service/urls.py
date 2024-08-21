@@ -52,6 +52,8 @@ urlpatterns = [
     path('todays_bookings/', views.todays_bookings, name='todays_bookings'),
     path('update_booking_status/', views.update_booking_status, name='update_booking_status'),
     path('track/', views.track, name='track'),
+
+    path('cancel-booking/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
     
 ]
 

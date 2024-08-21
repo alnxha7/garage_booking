@@ -12,6 +12,7 @@ from django.utils import timezone
 import json
 import logging
 from decimal import Decimal
+from datetime import date
 
 logger = logging.getLogger(__name__)
 
@@ -445,6 +446,7 @@ def success(request):
 @login_required
 def booking_history(request):
     user = request.user
+    today = date.today()
 
     if user.role == 'garage':
         try:
@@ -464,7 +466,8 @@ def booking_history(request):
         booking_history = BookingHistory.objects.filter(user_name=user.username)
         context = {
             'booking_history': booking_history,
-            'viewing_as': 'user'
+            'viewing_as': 'user',
+            'today': today
         }
     else:
         return HttpResponseForbidden("Access denied.")
@@ -520,3 +523,28 @@ def track(request):
         bookings = []
 
     return render(request, 'track.html', {'bookings': bookings})
+
+def cancel_booking(request, booking_id):
+    if request.method == "POST":
+        booking = BookingHistory.objects.get(id=booking_id)
+
+        # Ensure booking is not already canceled
+        if booking.is_canceled:
+            messages.error(request, "This booking is already canceled.")
+            return redirect('booking_history')
+
+        # Calculate the refund and garage earnings
+        refund_amount = booking.total_amount * Decimal('0.80')
+        garage_earnings = booking.total_amount * Decimal('0.20')
+
+        # Update the booking
+        booking.is_canceled = True
+        booking.final_price = refund_amount
+        booking.garage_earnings = garage_earnings
+        booking.save()
+
+        # Display success message
+        messages.success(request, "Booking canceled successfully. 80% of the total amount has been refunded.")
+        return redirect('booking_history')
+
+    return redirect('booking_history')
