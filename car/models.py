@@ -101,3 +101,13 @@ class Vehicle(models.Model):
     booking_history = models.ForeignKey(BookingHistory, on_delete=models.CASCADE, related_name='vehicles')
     number_plate = models.CharField(max_length=15, unique=True)
     model = models.CharField(max_length=100)
+
+class GarageProfile(models.Model):
+    garage = models.ForeignKey(Garage, on_delete=models.CASCADE, related_name='profiles')
+    owner_name = models.CharField(max_length=100)
+    exact_location = models.TextField()
+    image = models.ImageField(upload_to='garage_profile_images/')
+    garage_policies = models.TextField()
+
+    def __str__(self):
+        return f"Profile of {self.owner_name} for Garage at {self.garage.location}"

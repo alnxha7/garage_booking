@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus, Vehicle
+from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus, Vehicle, GarageProfile
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -627,7 +627,34 @@ def check_vehicle_details(request):
             return JsonResponse({'vehicleDetailsExists': vehicle_exists})
         else:
             return JsonResponse({'vehicleDetailsExists': False})
-        
+
+@login_required       
 def emergency_service(request):
     garages = Garage.objects.filter(approved=True)
     return render(request, 'emergency_service.html', {'garages': garages})
+
+@login_required
+def garage_profile(request):
+    garage = get_object_or_404(Garage, user=request.user)
+    
+    if request.method == 'POST':
+        owner_name = request.POST.get('owner_name')
+        exact_location = request.POST.get('exact_location')
+        image = request.FILES.get('image')
+        garage_policies = request.POST.get('garage_policies')
+        
+        # Check if a profile already exists for this garage
+        profile, created = GarageProfile.objects.get_or_create(garage=garage)
+        profile.owner_name = owner_name
+        profile.exact_location = exact_location
+        profile.image = image
+        profile.garage_policies = garage_policies
+        profile.save()
+            
+        return redirect('success')  # Redirect to a success page
+
+    # Fetch existing profile if it exists
+    profile, created = GarageProfile.objects.get_or_create(garage=garage)
+    
+    # Render the profile form
+    return render(request, 'garage_profile.html', {'garage': garage, 'garage_profile': profile})
