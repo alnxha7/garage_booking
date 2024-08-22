@@ -37,6 +37,13 @@
             font-size: 18px;
             color: #555;
         }
+        
+        .unique-id {
+            font-size: 16px;
+            color: #333;
+            margin-top: 20px;
+            word-break: break-word; /* Break long ID if needed */
+        }
 
         a {
             display: inline-block;
@@ -57,6 +64,7 @@
     <div class="container">
         <h1>Payment Successful!</h1>
         <p>Your payment was processed successfully. Thank you for your purchase.</p>
+        <p class="unique-id">Your Transaction ID: <strong>{{ unique_id }}</strong></p>
         <a href="{% url 'user_index' %}">Return to Home</a>
     </div>
 </body>

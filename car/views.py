@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseForbidden
 from django.utils import timezone
 import json
+import uuid
 import logging
 from decimal import Decimal
 from datetime import date, datetime
@@ -456,7 +457,8 @@ def confirm_payment(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 def success(request):
-    return render(request, 'success.html')
+    unique_id = str(uuid.uuid4())
+    return render(request, 'success.html', {'unique_id': unique_id})
 
 @login_required
 def booking_history(request):
