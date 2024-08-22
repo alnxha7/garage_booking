@@ -283,11 +283,16 @@ def delete_booking(request, booking_id):
 def garage_booking(request, garage_id):
     garage = get_object_or_404(Garage, id=garage_id)
     services = GarageService.objects.filter(garage_id=garage_id)
+
+    profile = get_object_or_404(GarageProfile, garage_id=garage_id)
+    images = GarageImage.objects.filter(garage_profile=profile)
     
     context = {
         'garage': garage,
         'garage_id': garage_id,
         'services': services,
+        'profile': profile,
+        'images': images
     }
     return render(request, 'garage_booking.html', context)
 
