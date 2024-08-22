@@ -627,3 +627,7 @@ def check_vehicle_details(request):
             return JsonResponse({'vehicleDetailsExists': vehicle_exists})
         else:
             return JsonResponse({'vehicleDetailsExists': False})
+        
+def emergency_service(request):
+    garages = Garage.objects.filter(approved=True)
+    return render(request, 'emergency_service.html', {'garages': garages})
