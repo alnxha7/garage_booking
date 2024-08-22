@@ -74,20 +74,18 @@ class GarageAdmin(admin.ModelAdmin):
         return actions
     
 class BookingHistoryAdmin(admin.ModelAdmin):
-
-    def get_actions(self, request):
-        actions = super().get_actions(request)
-        # Remove the 'delete_selected' action
-        if 'Delete selected booking historys' in actions:
-            del actions['Delete selected booking historys']
-        return actions
-
     list_display = (
         'garage_name', 'user_name', 'date_booked', 'slot_booked',
         'date_of_booking', 'service_selected', 'total_amount', 'admin_amount'
     )
     list_filter = ('date_booked', 'garage_name', 'user_name')
     search_fields = ('garage_name', 'user_name', 'service_selected')
+
+    # Override get_queryset to filter out canceled bookings
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Filter out canceled bookings
+        return qs.filter(is_canceled=False)
 
     # Optionally, you can also add fieldsets for more organized layout
     fieldsets = (
@@ -98,6 +96,13 @@ class BookingHistoryAdmin(admin.ModelAdmin):
             'fields': ('service_selected', 'total_amount', 'card_number', 'cvv', 'admin_amount')
         }),
     )
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        # Remove the 'delete_selected' action
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
     
 admin.site.register(User, UserAdmin)
