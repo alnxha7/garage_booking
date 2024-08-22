@@ -16,6 +16,116 @@
         <link rel="stylesheet" href="{% static 'css/jquery.timepicker.css' %}">
         <link rel="stylesheet" href="{% static 'css/flaticon.css' %}">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <style>
+            .profile-details {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.profile-details h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.profile-details form {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-details label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-details input, .profile-details textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.profile-details textarea {
+    resize: vertical;
+}
+
+/* Image Upload Section */
+.image-upload {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-upload h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.image-upload form {
+    display: flex;
+    flex-direction: column;
+}
+
+.image-upload label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.image-upload input[type="file"] {
+    margin-bottom: 15px;
+}
+
+/* Uploaded Images */
+.uploaded-images {
+    margin-top: 20px;
+}
+
+.uploaded-images h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.uploaded-images ul {
+    list-style: none;
+    padding: 0;
+}
+
+.uploaded-images li {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.uploaded-images img {
+    max-width: 200px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-details, .image-upload {
+        padding: 15px;
+    }
+
+    .profile-details input, .profile-details textarea, .image-upload input[type="file"] {
+        font-size: 14px;
+    }
+
+    .profile-details button, .image-upload button {
+        font-size: 14px;
+    }
+}
+        </style>
     </head>
     <body>
         <div class="wrap">
@@ -75,25 +185,51 @@
 
         <section class="ftco-section">
             <div class="container">
-                <h2>Customize Garage Profile for {{ user.username }}</h2>
-    
-                <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                
-                <label for="owner_name">Owner Name:</label>
-                <input type="text" id="owner_name" name="owner_name" required><br><br>
-                
-                <label for="exact_location">Exact Location:</label>
-                <input type="text" id="exact_location" name="exact_location" required><br><br>
-                
-                <label for="image">Image:</label>
-                <input type="file" id="image" name="image"><br><br>
-                
-                <label for="garage_policies">Garage Policies:</label>
-                <textarea id="garage_policies" name="garage_policies" rows="4" cols="50"></textarea><br><br>
-                
-                <button type="submit">Save Profile</button>
-                </form>
+                <!-- Profile Details Section -->
+                <section class="profile-details">
+                    <h2>Garage Profile for {{ user.username }}</h2>
+        
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <label for="owner_name">Owner Name:</label>
+                        <input type="text" id="owner_name" name="owner_name" value="{{ garage_profile.owner_name }}" required><br><br>
+                        
+                        <label for="exact_location">Exact Location:</label>
+                        <input type="text" id="exact_location" name="exact_location" value="{{ garage_profile.exact_location }}" required><br><br>
+                        
+                        <label for="garage_policies">Garage Policies:</label>
+                        <textarea id="garage_policies" name="garage_policies" rows="4" cols="50">{{ garage_profile.garage_policies }}</textarea><br><br>
+                        
+                        <button class="btn btn-primary" type="submit" name="profile_submit">Save Profile</button>
+                    </form>
+                </section>
+        
+                <!-- Image Section -->
+                <section class="image-upload">
+                    <h2>Manage Garage Images</h2>
+                    
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <label for="images">Upload Images:</label>
+                        <input type="file" id="images" name="images" multiple><br><br>
+                        
+                        <button class="btn btn-primary" type="submit" name="image_submit">Upload Images</button>
+                    </form>
+                    
+                    <!-- Display Uploaded Images -->
+                    <div class="uploaded-images">
+                        <h3>Uploaded Images:</h3>
+                        <ul>
+                            {% for image in images %}
+                                <li><img src="{{ image.image.url }}" alt="Garage Image" style="width: 200px; height: auto;"></li>
+                            {% empty %}
+                                <li>No images uploaded yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </section>
             </div>
         </section>
 

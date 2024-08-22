@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus, Vehicle, GarageProfile
+from .models import User, Garage, GarageService, Booking, BookingHistory, TodayBookingStatus, Vehicle, GarageProfile, GarageImage
 from django.contrib.auth import login as auth_login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -635,26 +635,36 @@ def emergency_service(request):
 
 @login_required
 def garage_profile(request):
+    # Fetch the garage profile
     garage = get_object_or_404(Garage, user=request.user)
+    profile, profile_created = GarageProfile.objects.get_or_create(garage=garage)
     
     if request.method == 'POST':
-        owner_name = request.POST.get('owner_name')
-        exact_location = request.POST.get('exact_location')
-        image = request.FILES.get('image')
-        garage_policies = request.POST.get('garage_policies')
-        
-        # Check if a profile already exists for this garage
-        profile, created = GarageProfile.objects.get_or_create(garage=garage)
-        profile.owner_name = owner_name
-        profile.exact_location = exact_location
-        profile.image = image
-        profile.garage_policies = garage_policies
-        profile.save()
+        if 'profile_submit' in request.POST:
+            # Handle profile details update
+            owner_name = request.POST.get('owner_name')
+            exact_location = request.POST.get('exact_location')
+            garage_policies = request.POST.get('garage_policies')
             
-        return redirect('success')  # Redirect to a success page
+            profile.owner_name = owner_name
+            profile.exact_location = exact_location
+            profile.garage_policies = garage_policies
+            profile.save()
+        
+        elif 'image_submit' in request.POST:
+            # Handle image upload
+            if 'images' in request.FILES:
+                images = request.FILES.getlist('images')
+                for img in images:
+                    GarageImage.objects.create(garage_profile=profile, image=img)
+            return redirect('garage_profile')  # Redirect to avoid resubmission on refresh
 
-    # Fetch existing profile if it exists
-    profile, created = GarageProfile.objects.get_or_create(garage=garage)
+    # Fetch all images related to the profile
+    images = GarageImage.objects.filter(garage_profile=profile)
     
-    # Render the profile form
-    return render(request, 'garage_profile.html', {'garage': garage, 'garage_profile': profile})
+    return render(request, 'garage_profile.html', {
+        'garage': garage,
+        'garage_profile': profile,
+        'images': images,
+    })
+

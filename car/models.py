@@ -105,9 +105,12 @@ class Vehicle(models.Model):
 class GarageProfile(models.Model):
     garage = models.ForeignKey(Garage, on_delete=models.CASCADE, related_name='profiles')
     owner_name = models.CharField(max_length=100)
-    exact_location = models.TextField()
-    image = models.ImageField(upload_to='garage_profile_images/')
+    exact_location = models.TextField() 
     garage_policies = models.TextField()
 
-    def __str__(self):
+    def __str__(self):  
         return f"Profile of {self.owner_name} for Garage at {self.garage.location}"
+    
+class GarageImage(models.Model):
+    garage_profile = models.ForeignKey(GarageProfile, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='garage_profile_images/')
